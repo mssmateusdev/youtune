@@ -37,9 +37,9 @@ import { useHiddenPlaylistIds } from "../settings/hiddenPlaylists";
 type LibraryTab = "songs" | "albums" | "artists" | "playlists";
 
 const TABS: Array<{ value: LibraryTab; label: string }> = [
-  { value: "songs", label: "Songs" },
-  { value: "albums", label: "Albums" },
-  { value: "artists", label: "Artists" },
+  { value: "songs", label: "Músicas" },
+  { value: "albums", label: "Álbuns" },
+  { value: "artists", label: "Artistas" },
   { value: "playlists", label: "Playlists" },
 ];
 
@@ -60,7 +60,7 @@ function matches(query: string, ...fields: Array<string | undefined>): boolean {
  * split the list. A bare `localeCompare` gets both of those wrong.
  */
 function compareText(left: string | undefined, right: string | undefined): number {
-  return (left || "￿").localeCompare(right || "￿", undefined, {
+  return (left || "").localeCompare(right || "", undefined, {
     numeric: true,
     sensitivity: "base",
   });
@@ -76,6 +76,13 @@ function sortItems<T>(
   const key = sort === "artist" ? artist : title;
   return [...items].sort((left, right) => compareText(key(left), key(right)));
 }
+
+const NOUN_PT: Record<string, string> = {
+  songs: "músicas",
+  albums: "álbuns",
+  artists: "artistas",
+  playlists: "playlists",
+};
 
 /**
  * Two different nothings.
@@ -93,10 +100,11 @@ function EmptyState({
   query: string;
   onClearQuery: () => void;
 }) {
+  const label = NOUN_PT[noun] || noun;
   return (
     <div className="flex flex-col items-center gap-3 px-2 py-16 text-center">
       <p className="text-sm text-muted-foreground">
-        {query ? `No ${noun} match "${query}".` : `No ${noun} in your library yet.`}
+        {query ? `Nenhum(a) ${label} corresponde a "${query}".` : `Nenhum(a) ${label} na sua biblioteca ainda.`}
       </p>
       {query && (
         <button
@@ -104,7 +112,7 @@ function EmptyState({
           onClick={onClearQuery}
           className="rounded-full bg-card px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
-          Clear filter
+          Limpar filtro
         </button>
       )}
     </div>
@@ -316,8 +324,8 @@ export function LibraryPage({
     return (
       <p className="px-2 py-16 text-center text-sm text-muted-foreground">
         {libraryState.status === "signed-out"
-          ? "Sign in to see your library."
-          : "Loading your library..."}
+          ? "Faça login para ver sua biblioteca."
+          : "Carregando sua biblioteca..."}
       </p>
     );
   }
@@ -325,7 +333,7 @@ export function LibraryPage({
   return (
     <div className="flex flex-col gap-5">
       <header className="flex flex-col gap-5 pb-1">
-        <h1 className="text-4xl font-bold tracking-[-0.03em] text-foreground">Library</h1>
+        <h1 className="text-4xl font-bold tracking-[-0.03em] text-foreground">Biblioteca</h1>
 
         <div className="flex flex-wrap items-center gap-3">
           {/*
@@ -337,7 +345,7 @@ export function LibraryPage({
           <div
             className="flex shrink-0 gap-1 rounded-full bg-card/70 p-1"
             role="tablist"
-            aria-label="Library section"
+            aria-label="Seção da biblioteca"
           >
             {TABS.map((item, index) => {
               const active = tab === item.value;
@@ -381,15 +389,15 @@ export function LibraryPage({
               <input
                 value={query}
                 onChange={(event) => setQuery(event.target.value)}
-                placeholder={`Filter ${tab}`}
-                aria-label="Filter library"
+                placeholder="Filtrar biblioteca"
+                aria-label="Filtrar biblioteca"
                 className="w-full min-w-0 bg-transparent text-sm text-foreground outline-none placeholder:text-muted-foreground"
               />
               {isFiltering && (
                 <button
                   type="button"
                   onClick={() => setQuery("")}
-                  aria-label="Clear filter"
+                  aria-label="Limpar filtro"
                   className="shrink-0 rounded-full text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 >
                   <CloseIcon size={14} />
@@ -402,14 +410,14 @@ export function LibraryPage({
               value={activeSort}
               onValueChange={(value) => setSort(value as LibrarySort)}
             >
-              <SelectTrigger aria-label="Sort library">
+              <SelectTrigger aria-label="Ordenar biblioteca">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="recent">Recently added</SelectItem>
-                <SelectItem value="title">{tab === "artists" ? "Name" : "Title"}</SelectItem>
+                <SelectItem value="recent">Adicionados recentemente</SelectItem>
+                <SelectItem value="title">{tab === "artists" ? "Nome" : "Título"}</SelectItem>
                 {tab !== "artists" && (
-                  <SelectItem value="artist">{tab === "playlists" ? "Owner" : "Artist"}</SelectItem>
+                  <SelectItem value="artist">{tab === "playlists" ? "Proprietário" : "Artista"}</SelectItem>
                 )}
               </SelectContent>
             </Select>
@@ -433,8 +441,8 @@ export function LibraryPage({
             >
               <span className="w-6 text-right">#</span>
               <span className="size-10 shrink-0" />
-              <span className="min-w-0 flex-1">Title</span>
-              <span className="hidden min-w-0 flex-1 basis-0 lg:block">Album</span>
+              <span className="min-w-0 flex-1">Título</span>
+              <span className="hidden min-w-0 flex-1 basis-0 lg:block">Álbum</span>
             </div>
             <div className="flex flex-col gap-0.5">
             {songs.map((track, index) => (
@@ -504,7 +512,7 @@ export function LibraryPage({
                   <span className="line-clamp-2 text-sm font-medium text-foreground">
                     {artist.name}
                   </span>
-                  <span className="text-xs text-muted-foreground">Artist</span>
+                  <span className="text-xs text-muted-foreground">Artista</span>
                 </span>
               </button>
             ))}
@@ -524,12 +532,12 @@ export function LibraryPage({
                 className="flex w-fit items-center gap-1.5 rounded-full bg-card/70 px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 {showHiddenPlaylists ? <EyeClosedIcon size={14} /> : <EyeIcon size={14} />}
-                {showHiddenPlaylists ? "Hide the hidden playlists" : `Show ${hiddenPlaylistCount} hidden`}
+                {showHiddenPlaylists ? "Ocultar playlists escondidas" : `Mostrar ${hiddenPlaylistCount} ocultas`}
               </button>
             )}
             {displayedPlaylists.length === 0 ? (
               <p className="px-2 py-16 text-center text-sm text-muted-foreground">
-                All your playlists are hidden.
+                Todas as suas playlists estão ocultas.
               </p>
             ) : (
               <div className={GRID}>

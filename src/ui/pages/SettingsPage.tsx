@@ -40,6 +40,7 @@ import {
 } from "@/components/motion/select";
 import {
   BugIcon,
+  CheckIcon,
   DownloadIcon,
   FolderAddIcon,
   FolderIcon,
@@ -54,10 +55,16 @@ import {
   QueuePanelIcon,
   RefreshIcon,
   SettingsIcon,
-  StarIcon,
+  SpeedIcon,
   TrashIcon,
   UserIcon,
 } from "@/ui/icons";
+import {
+  setAdBlockEnabled,
+  setFastLoadingEnabled,
+  useAdBlockEnabled,
+  useFastLoadingEnabled,
+} from "../settings/adBlockAndSpeed";
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
 import {
@@ -203,7 +210,7 @@ import {
   useLastFmScrobblingEnabled,
 } from "../settings/lastfm";
 import { isLinux, isTilingWindowManager, subscribeTilingWindowManager } from "../platform";
-import { GITHUB_NEW_ISSUE_URL, GITHUB_REPOSITORY_URL } from "../links";
+import { ACCENT_COLOR_PRESETS, setAccentColor, useAccentColor } from "../settings/accentColor";
 import { AccountAvatar, AccountSwitcher, AddGoogleAccountButton, GoogleAccountSwitcher } from "../components/AccountSwitcher";
 import {
   AUDIO_QUALITY_LABELS,
@@ -244,12 +251,12 @@ const SETTINGS_CARD = "flex flex-col gap-5 rounded-2xl bg-card/50 p-6";
  * "liking songs stopped working" into a report somebody can act on.
  */
 function formatSessionAge(confirmedAt: number | null): string {
-  if (confirmedAt === null) return "not yet";
+  if (confirmedAt === null) return "ainda não";
   const minutes = Math.floor((Date.now() - confirmedAt) / 60_000);
-  if (minutes < 1) return "just now";
-  if (minutes < 60) return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+  if (minutes < 1) return "agora mesmo";
+  if (minutes < 60) return `há ${minutes} minuto${minutes === 1 ? "" : "s"}`;
   const hours = Math.floor(minutes / 60);
-  return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+  return `há ${hours} hora${hours === 1 ? "" : "s"}`;
 }
 
 /**
@@ -295,16 +302,16 @@ function EqualizerSettings({ engineMode }: { engineMode: AudioEngineMode }) {
       <div className="flex items-center justify-between gap-4">
         <div className="flex flex-col gap-0.5">
           <span id={labelId} className="text-sm font-medium text-foreground">
-            Equaliser
+            Equalizador
           </span>
           <span className="text-xs text-muted-foreground">
             {available
               ? enabled
                 ? flat
-                  ? "Flat"
-                  : `${equalizer.preampDb > 0 ? "+" : ""}${equalizer.preampDb} dB preamp`
-                : "Off"
-              : "Needs the Rust playback method"}
+                  ? "Plano"
+                  : `${equalizer.preampDb > 0 ? "+" : ""}${equalizer.preampDb} dB pré-amp`
+                : "Desligado"
+              : "Requer o método de reprodução Rust"}
           </span>
         </div>
         <Switch
@@ -342,7 +349,7 @@ function EqualizerSettings({ engineMode }: { engineMode: AudioEngineMode }) {
         </div>
 
         <EqualizerBand
-          label="Preamp"
+          label="Pré-amp"
           value={equalizer.preampDb}
           disabled={!available}
           onChange={(preampDb) => setEqualizer({ ...equalizer, preampDb })}
@@ -362,8 +369,7 @@ function EqualizerSettings({ engineMode }: { engineMode: AudioEngineMode }) {
       </div>
 
       <p className="px-1 text-xs text-muted-foreground">
-        Applies immediately, to the track playing. A limiter sits after the bands, so a heavy
-        boost is held back rather than clipped — lower the preamp to hear the difference instead.
+        Aplica imediatamente à faixa em reprodução. Um limitador atua após as bandas, evitando distorção por clipagem — reduza o pré-amp para ouvir a diferença.
       </p>
     </div>
   );
@@ -395,8 +401,8 @@ function OutputDeviceSetting({ engineMode }: { engineMode: AudioEngineMode }) {
 
   return (
     <SettingRow
-      title="Output device"
-      description="Which sound card the Rust engine plays to."
+      title="Dispositivo de saída"
+      description="Placa de som onde o motor Rust reproduz o áudio."
       disabled={!available}
     >
       {(labelId) => (
@@ -411,7 +417,7 @@ function OutputDeviceSetting({ engineMode }: { engineMode: AudioEngineMode }) {
             <SelectValue />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value={SYSTEM_DEFAULT_DEVICE}>System default</SelectItem>
+            <SelectItem value={SYSTEM_DEFAULT_DEVICE}>Padrão do sistema</SelectItem>
             {devices.map((device) => (
               <SelectItem key={device.id} value={device.id}>
                 {device.name}
@@ -516,8 +522,8 @@ function PotatoPcSettings() {
   return (
     <>
       <SettingRow
-        title="Potato PC"
-        description="Turns off animations, blur, shadows and the ambient artwork, and switches to opaque surfaces. Manage picks them off one at a time."
+        title="Modo Batata (PC Fraco)"
+        description="Desativa animações, desfoques, sombras e arte ambiente, alternando para superfícies opacas. 'Gerenciar' permite ajustar um por um."
       >
         {(labelId) => (
           <>
@@ -528,7 +534,7 @@ function PotatoPcSettings() {
               aria-controls={panelId}
               className="rounded-full px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:bg-card hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
             >
-              {isManaging ? "Done" : "Manage"}
+              {isManaging ? "Concluído" : "Gerenciar"}
             </button>
             <Switch
               checked={potatoPcMode}
@@ -542,8 +548,7 @@ function PotatoPcSettings() {
       {isManaging && (
         <div id={panelId} className="flex flex-col">
           <p className="pb-1 pt-2 text-sm text-muted-foreground">
-            One switch per effect. Turn them off one at a time to find which one your machine is
-            paying for.
+            Um botão por efeito. Desative um de cada vez para descobrir o que consome desempenho no seu computador.
           </p>
           {RENDER_EFFECTS.map((effect) => (
             <RenderEffectToggle key={effect.id} effect={effect} />
@@ -665,17 +670,17 @@ const SETTINGS_TABS: Array<{
   description: string;
   icon: typeof UserIcon;
 }> = [
-  { id: "about", label: "Account", description: "Sign-in, integrations, updates", icon: UserIcon },
-  { id: "appearance", label: "Appearance", description: "Theme and motion", icon: PaletteIcon },
+  { id: "about", label: "Conta", description: "Login, integrações, atualizações", icon: UserIcon },
+  { id: "appearance", label: "Aparência", description: "Tema e efeitos visuais", icon: PaletteIcon },
   {
     id: "playback",
-    label: "Playback",
-    description: "Transitions and session",
+    label: "Reprodução",
+    description: "Transições e sessão",
     icon: PlayIcon,
   },
-  { id: "system", label: "Library", description: "Cache and local files", icon: FolderIcon },
-  { id: "window", label: "Window", description: "Chrome and mini player", icon: QueuePanelIcon },
-  { id: "shortcuts", label: "Shortcuts", description: "Keyboard bindings", icon: KeyIcon },
+  { id: "system", label: "Biblioteca", description: "Cache e arquivos locais", icon: FolderIcon },
+  { id: "window", label: "Janela", description: "Interface e mini player", icon: QueuePanelIcon },
+  { id: "shortcuts", label: "Atalhos", description: "Teclas de atalho", icon: KeyIcon },
 ];
 
 const THEME_OPTIONS: Array<{
@@ -684,12 +689,12 @@ const THEME_OPTIONS: Array<{
   hint: string;
   swatch: string;
 }> = [
-  { value: "light", label: "Light", hint: "Always light", swatch: "bg-white" },
-  { value: "dark", label: "Dark", hint: "Always dark", swatch: "bg-neutral-900" },
+  { value: "light", label: "Claro", hint: "Sempre claro", swatch: "bg-white" },
+  { value: "dark", label: "Escuro", hint: "Sempre escuro", swatch: "bg-neutral-900" },
   {
     value: "system",
-    label: "System",
-    hint: "Match the OS",
+    label: "Sistema",
+    hint: "Seguir o sistema",
     swatch: "bg-linear-to-br from-white to-neutral-900",
   },
 ];
@@ -739,6 +744,9 @@ export function SettingsPage({
   const [lastFmError, setLastFmError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<SettingsTab>("about");
   const themePreference = useThemePreference();
+  const accentColor = useAccentColor();
+  const adBlockEnabled = useAdBlockEnabled();
+  const fastLoadingEnabled = useFastLoadingEnabled();
   const [listeningShortcut, setListeningShortcut] = useState<KeyboardShortcutAction | null>(null);
   const keyboardShortcuts = useKeyboardShortcuts();
   const miniPlayerEnabled = useMiniPlayerEnabled();
@@ -1125,28 +1133,10 @@ export function SettingsPage({
     <main className="flex min-h-0 flex-1 flex-col gap-7">
       <header className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
         <div className="flex flex-col gap-1.5">
-          <h1>Settings</h1>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground">Configurações</h1>
           <p className="text-sm text-muted-foreground">
-            Manage your account, library, appearance, and window behaviour.
+            Gerencie sua conta, biblioteca, aparência e comportamento da janela.
           </p>
-        </div>
-
-        {/*
-          Card pills rather than the bare text links these were: at text weight they read as
-          part of the description above and were routinely missed. They stay unfilled so they
-          still sit below the category nav in the hierarchy.
-        */}
-        <div className="flex flex-wrap items-center gap-2">
-          <ExternalLinkButton
-            icon={<StarIcon size={16} aria-hidden="true" />}
-            label="Star on GitHub"
-            url={GITHUB_REPOSITORY_URL}
-          />
-          <ExternalLinkButton
-            icon={<BugIcon size={16} aria-hidden="true" />}
-            label="Report an issue"
-            url={GITHUB_NEW_ISSUE_URL}
-          />
         </div>
       </header>
 
@@ -1204,16 +1194,16 @@ export function SettingsPage({
         <div className="flex min-h-0 w-full min-w-0 max-w-2xl flex-1 flex-col">
 
       {activeTab === "about" && (
-        <div className="flex flex-col gap-5" role="tabpanel" aria-label="About settings">
+        <div className="flex flex-col gap-5" role="tabpanel" aria-label="Configurações de sobre">
           <section className={SETTINGS_CARD} aria-labelledby="account-settings-title">
             <SettingsCardHeader
-              title="Account"
+              title="Conta"
               titleId="account-settings-title"
               icon={<UserIcon size={18} aria-hidden="true" />}
-              description={isSignedIn ? "Signed in to YouTube Music" : "No account connected"}
+              description={isSignedIn ? "Conectado ao YouTube Music" : "Nenhuma conta conectada"}
               status={
                 <span className={isSignedIn ? "text-primary" : "text-muted-foreground"}>
-                  {isSignedIn ? "Connected" : "Signed out"}
+                  {isSignedIn ? "Conectado" : "Desconectado"}
                 </span>
               }
             />
@@ -1226,12 +1216,12 @@ export function SettingsPage({
 
               <div className="flex min-w-0 flex-1 flex-col">
                 <span className="truncate text-base font-medium text-foreground">
-                  {isSignedIn ? account?.name || "YouTube Music" : "Not signed in"}
+                  {isSignedIn ? account?.name || "YouTube Music" : "Não conectado"}
                 </span>
                 <span className="truncate text-sm text-muted-foreground">
                   {isSignedIn
-                    ? `Session confirmed ${formatSessionAge(libraryState.sessionConfirmedAt)}.`
-                    : "Sign in to load your library."}
+                    ? `Sessão confirmada ${formatSessionAge(libraryState.sessionConfirmedAt)}.`
+                    : "Faça login para carregar sua biblioteca."}
                 </span>
               </div>
 
@@ -1242,7 +1232,7 @@ export function SettingsPage({
                   onClick={() => void libraryController.signOut()}
                 >
                   <LogoutIcon size={18} />
-                  Sign out
+                  Sair
                 </button>
               ) : (
                 <GoogleSignInButton
@@ -1260,7 +1250,7 @@ export function SettingsPage({
                   libraryController={libraryController}
                   showSingle
                   allowRemove
-                  label="Accounts"
+                  label="Contas"
                 />
                 <AddGoogleAccountButton disabled={authBusy} onClick={() => void onSignIn()} />
               </div>
@@ -1269,7 +1259,7 @@ export function SettingsPage({
             {/* Renders nothing unless the account actually has more than one channel. */}
             {isSignedIn && (
               <div className="flex flex-col gap-1.5 border-t border-border pt-4">
-                <AccountSwitcher libraryController={libraryController} showSingle label="Channel" />
+                <AccountSwitcher libraryController={libraryController} showSingle label="Canal" />
               </div>
             )}
 
@@ -1283,20 +1273,20 @@ export function SettingsPage({
               icon={<LastFmIcon size={18} aria-hidden="true" />}
               description={
                 lastFmSession
-                  ? `Connected as ${lastFmSession.username}`
-                  : "Connect Last.fm to scrobble your listening history."
+                  ? `Conectado como ${lastFmSession.username}`
+                  : "Conecte o Last.fm para registrar seu histórico de reprodução."
               }
               status={
                 <span className={lastFmSession ? "text-primary" : "text-muted-foreground"}>
-                  {lastFmSession ? "Connected" : "Signed out"}
+                  {lastFmSession ? "Conectado" : "Desconectado"}
                 </span>
               }
             />
 
             <div className="flex flex-col gap-5">
               <SettingToggle
-                title="Scrobble plays"
-                description="Send now playing updates and scrobbles after a track reaches the Last.fm listening threshold."
+                title="Fazer scrobble das músicas"
+                description="Envia atualizações de reprodução e scrobbles quando uma faixa atinge o limite do Last.fm."
                 checked={lastFmSession ? lastFmScrobblingEnabled : false}
                 disabled={!lastFmSession}
                 onCheckedChange={setLastFmScrobblingEnabled}
@@ -1304,13 +1294,13 @@ export function SettingsPage({
 
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <span className={cn(SETTING_LABEL, "min-w-0 flex-1")}>
-                  <strong>Account connection</strong>
+                  <strong>Conexão da conta</strong>
                   <span>
                     {lastFmAuth
-                      ? "Approve the connection in your browser, then finish it here."
+                      ? "Aprove a conexão no seu navegador e depois conclua aqui."
                       : lastFmSession
-                        ? "Disconnecting stops future Last.fm updates from this app."
-                        : "A browser window will open so you can approve this app on Last.fm."}
+                        ? "Desconectar impede futuras atualizações do Last.fm a partir deste app."
+                        : "Uma janela do navegador será aberta para você aprovar este aplicativo no Last.fm."}
                   </span>
                 </span>
                 {lastFmSession ? (
@@ -1321,7 +1311,7 @@ export function SettingsPage({
                     onClick={() => void handleDisconnectLastFm()}
                   >
                     <LastFmIcon size={18} />
-                    {lastFmBusy ? "Disconnecting..." : "Disconnect"}
+                    {lastFmBusy ? "Desconectando..." : "Desconectar"}
                   </button>
                 ) : lastFmAuth ? (
                   <button
@@ -1331,7 +1321,7 @@ export function SettingsPage({
                     onClick={() => void handleFinishLastFmAuth()}
                   >
                     <LastFmIcon size={18} />
-                    {lastFmBusy ? "Finishing..." : "Finish connection"}
+                    {lastFmBusy ? "Concluindo..." : "Concluir conexão"}
                   </button>
                 ) : (
                   <button
@@ -1341,7 +1331,7 @@ export function SettingsPage({
                     onClick={() => void handleStartLastFmAuth()}
                   >
                     <LastFmIcon size={18} />
-                    {lastFmBusy ? "Opening..." : "Connect Last.fm"}
+                    {lastFmBusy ? "Abrindo..." : "Conectar Last.fm"}
                   </button>
                 )}
               </div>
@@ -1357,8 +1347,8 @@ export function SettingsPage({
 
             <div className="flex flex-col gap-5">
               <SettingToggle
-                title="Show what you're playing"
-                description="Publishes the current track, artist and artwork to your Discord profile. Turning this off clears whatever is showing there now."
+                title="Mostrar o que você está ouvindo"
+                description="Publica a faixa atual, artista e capa no seu perfil do Discord. Desativar isso limpa o status atual."
                 checked={discordPresenceEnabled}
                 onCheckedChange={(enabled) => void DiscordRpcService.setEnabled(enabled)}
               />
@@ -1367,18 +1357,18 @@ export function SettingsPage({
 
           <section className={SETTINGS_CARD} aria-labelledby="about-settings-title">
             <h2 className="text-lg font-semibold text-foreground" id="about-settings-title">
-              About
+              Sobre
             </h2>
 
             <div className="flex flex-col gap-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <span className={cn(SETTING_LABEL, "min-w-0 flex-1")}>
-                  <strong>Updates</strong>
+                  <strong>Atualizações</strong>
                   <span>
-                    Installed version: {
+                    Versão instalada: {
                       installedVersion
                         ? installedVersion === "Unknown" ? installedVersion : `v${installedVersion}`
-                        : "Loading..."
+                        : "Carregando..."
                     }
                   </span>
                 </span>
@@ -1389,7 +1379,7 @@ export function SettingsPage({
                   onClick={() => void handleCheckForUpdates()}
                 >
                   <RefreshIcon size={18} />
-                  {updateStatus === "checking" ? "Checking..." : "Check for updates"}
+                  {updateStatus === "checking" ? "Verificando..." : "Verificar atualizações"}
                 </button>
               </div>
 
@@ -1398,9 +1388,9 @@ export function SettingsPage({
                   <span>
                     {updateStatus === "installing"
                       ? updateProgress?.percent !== undefined
-                        ? `Downloading version ${updateResult.version}: ${updateProgress.percent}%`
-                        : `Preparing version ${updateResult.version}...`
-                      : `Version ${updateResult.version} is available.`}
+                        ? `Baixando versão ${updateResult.version}: ${updateProgress.percent}%`
+                        : `Preparando versão ${updateResult.version}...`
+                      : `A versão ${updateResult.version} está disponível.`}
                   </span>
                   {updateResult.canInstall && (
                     <button
@@ -1409,20 +1399,20 @@ export function SettingsPage({
                       disabled={updateStatus === "installing"}
                       onClick={() => void handleInstallUpdate()}
                     >
-                      {updateStatus === "installing" ? "Installing..." : "Install"}
+                      {updateStatus === "installing" ? "Instalando..." : "Instalar"}
                     </button>
                   )}
                   {/* The one link where a silent failure strands the user: if this cannot
                       open, they have no other route to the download. */}
                   <ExternalLinkButton
-                    label={updateResult.canInstall ? "View changes" : "Download"}
+                    label={updateResult.canInstall ? "Ver alterações" : "Baixar"}
                     url={updateResult.releaseUrl}
                     className="px-4 py-2"
                   />
                 </div>
               )}
               {updateStatus === "current" && (
-                <p className="text-sm text-muted-foreground">You are up to date.</p>
+                <p className="text-sm text-muted-foreground">Você está na versão mais recente.</p>
               )}
               {updateStatus === "error" && (
                 <p className="text-sm text-destructive">{updateError}</p>
@@ -1430,8 +1420,8 @@ export function SettingsPage({
 
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <span className={cn(SETTING_LABEL, "min-w-0 flex-1")}>
-                  <strong>Quick start</strong>
-                  <span>Replay the guided introduction.</span>
+                  <strong>Início rápido</strong>
+                  <span>Rever a apresentação guiada.</span>
                 </span>
                 <button
                   className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-card disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
@@ -1439,7 +1429,7 @@ export function SettingsPage({
                   onClick={onRestartOnboarding}
                 >
                   <RefreshIcon size={18} />
-                  Start onboarding
+                  Iniciar introdução
                 </button>
               </div>
             </div>
@@ -1448,28 +1438,28 @@ export function SettingsPage({
       )}
 
       {activeTab === "system" && (
-        <div className="flex flex-col gap-5" role="tabpanel" aria-label="Library settings">
+        <div className="flex flex-col gap-5" role="tabpanel" aria-label="Configurações da biblioteca">
           <section className={SETTINGS_CARD} aria-labelledby="library-local-title">
             <SettingsCardHeader
-              title="Local music"
+              title="Músicas locais"
               titleId="library-local-title"
               icon={<FolderIcon size={18} aria-hidden="true" />}
-              description="Folders on this computer, scanned into playlists."
+              description="Pastas neste computador verificadas em listas de reprodução."
             />
 
             <div className="flex flex-col gap-3">
               <div className="flex flex-wrap items-end justify-between gap-3">
                 <span className={cn(SETTING_LABEL, "min-w-0 flex-1")}>
-                  <strong>Local playlists</strong>
-                  <span>Create playlists from folders on this computer.</span>
+                  <strong>Playlists locais</strong>
+                  <span>Crie playlists a partir de pastas neste computador.</span>
                 </span>
                 <div className="flex flex-wrap items-center gap-2">
                   <input
                     className={cn(SETTINGS_FIELD, "w-44")}
                     type="text"
                     value={localPlaylistName}
-                    placeholder="Playlist name"
-                    aria-label="Local playlist name"
+                    placeholder="Nome da playlist"
+                    aria-label="Nome da playlist local"
                     onChange={(event) => setLocalPlaylistName(event.target.value)}
                     onKeyDown={(event) => {
                       if (event.key === "Enter") handleCreateLocalPlaylist();
@@ -1481,7 +1471,7 @@ export function SettingsPage({
                     onClick={handleCreateLocalPlaylist}
                   >
                     <FolderAddIcon size={18} />
-                    Create
+                    Criar
                   </button>
                 </div>
               </div>
@@ -1503,7 +1493,7 @@ export function SettingsPage({
                           onClick={() => deleteLocalPlaylist(playlist.id)}
                         >
                           <TrashIcon size={18} />
-                          Delete
+                          Excluir
                         </button>
                       </div>
 
@@ -1513,8 +1503,8 @@ export function SettingsPage({
                             className={cn(SETTINGS_FIELD, "flex-1")}
                             type="text"
                             value={localPlaylistPathInputs[playlist.id] ?? ""}
-                            placeholder="/Users/name/Music"
-                            aria-label={`Folder path for ${playlist.name}`}
+                            placeholder="C:\Músicas ou /Users/nome/Music"
+                            aria-label={`Pasta para ${playlist.name}`}
                             onChange={(event) => setLocalPlaylistPathInputs((current) => ({
                               ...current,
                               [playlist.id]: event.target.value,
@@ -1527,8 +1517,8 @@ export function SettingsPage({
                             type="button"
                             className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-card disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
                             disabled={localPlaylistBrowsingId === playlist.id}
-                            title="Browse for folder"
-                            aria-label={`Browse for a folder for ${playlist.name}`}
+                            title="Procurar pasta"
+                            aria-label={`Procurar pasta para ${playlist.name}`}
                             onClick={() => void handleBrowseLocalPlaylistPath(playlist.id)}
                           >
                             <FolderOpenIcon size={17} aria-hidden="true" />
@@ -1539,7 +1529,7 @@ export function SettingsPage({
                           type="button"
                           onClick={() => handleAddLocalPlaylistPath(playlist.id)}
                         >
-                          Add
+                          Adicionar
                         </button>
                       </div>
 
@@ -1550,7 +1540,7 @@ export function SettingsPage({
                               <span>{path}</span>
                               <button
                                 type="button"
-                                aria-label={`Remove ${path}`}
+                                aria-label={`Remover ${path}`}
                                 onClick={() => removeLocalPlaylistPath(playlist.id, path)}
                               >
                                 <TrashIcon size={16} aria-hidden="true" />
@@ -1559,7 +1549,7 @@ export function SettingsPage({
                           ))}
                         </div>
                       ) : (
-                        <p className="px-1 py-3 text-sm text-muted-foreground">No paths added yet.</p>
+                        <p className="px-1 py-3 text-sm text-muted-foreground">Nenhuma pasta adicionada ainda.</p>
                       )}
                     </div>
                   ))}
@@ -1571,10 +1561,10 @@ export function SettingsPage({
 
           <section className={SETTINGS_CARD} aria-labelledby="library-storage-title">
             <SettingsCardHeader
-              title="Storage"
+              title="Armazenamento"
               titleId="library-storage-title"
               icon={<DownloadIcon size={18} aria-hidden="true" />}
-              description="How much disk Zuno is allowed to use."
+              description="Espaço em disco permitido para o YouTune."
             />
 
             <div className="flex flex-wrap items-end justify-between gap-4 py-2">
@@ -1582,9 +1572,9 @@ export function SettingsPage({
                 <strong>Cache</strong>
                 <span className="tabular-nums">
                   {cacheStats
-                    ? `${formatBytes(cacheStats.usedBytes)} of ${formatBytes(cacheStats.maxBytes)}`
-                    : "Loading…"}
-                  {cacheStats ? ` · ${cacheStats.entryCount} items` : ""}
+                    ? `${formatBytes(cacheStats.usedBytes)} de ${formatBytes(cacheStats.maxBytes)}`
+                    : "Carregando…"}
+                  {cacheStats ? ` · ${cacheStats.entryCount} itens` : ""}
                 </span>
               </span>
 
@@ -1592,7 +1582,7 @@ export function SettingsPage({
                 {/* The caption sits above the field rather than inside it: nested in a
                     fixed-width pill it wrapped onto two lines and squeezed the number. */}
                 <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                  Maximum size
+                  Tamanho máximo
                   <span className="flex w-28 items-center gap-1.5 rounded-lg bg-background px-2.5 py-1.5 text-sm text-foreground focus-within:ring-2 focus-within:ring-inset focus-within:ring-ring/60">
                     <input
                       className="w-full min-w-0 bg-transparent tabular-nums outline-none"
@@ -1613,7 +1603,7 @@ export function SettingsPage({
                   disabled={cacheBusy}
                   onClick={() => void saveCacheSize()}
                 >
-                  Save
+                  Salvar
                 </button>
                 <button
                   className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
@@ -1622,7 +1612,7 @@ export function SettingsPage({
                   onClick={() => void handleClearCache()}
                 >
                   <TrashIcon size={18} />
-                  Clear cache
+                  Limpar cache
                 </button>
               </div>
             </div>
@@ -1635,21 +1625,21 @@ export function SettingsPage({
                 <strong>Downloads</strong>
                 <span>
                   {offlineState.usedBytes > 0 || Object.keys(offlineState.entries).length > 0
-                    ? `${Object.keys(offlineState.entries).length} songs · ${formatBytes(offlineState.usedBytes)}`
-                    : "No songs downloaded yet."}
+                    ? `${Object.keys(offlineState.entries).length} músicas · ${formatBytes(offlineState.usedBytes)}`
+                    : "Nenhuma música baixada ainda."}
                   {offlineState.downloadingId
                     ? offlineState.progress !== null
-                      ? ` · downloading ${offlineState.progress}%`
-                      : " · downloading"
+                      ? ` · baixando ${offlineState.progress}%`
+                      : " · baixando"
                     : ""}
                   {offlineState.queued.length > 0
-                    ? ` · ${offlineState.queued.length} queued`
+                    ? ` · ${offlineState.queued.length} na fila`
                     : ""}
                 </span>
               </span>
               <div className="flex flex-wrap items-center gap-2">
                 <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                  Maximum size
+                  Tamanho máximo
                   <span className="flex w-28 items-center gap-1.5 rounded-lg bg-background px-2.5 py-1.5 text-sm text-foreground focus-within:ring-2 focus-within:ring-inset focus-within:ring-ring/60">
                     <input
                       className="w-full min-w-0 bg-transparent outline-none"
@@ -1663,7 +1653,7 @@ export function SettingsPage({
                         setOfflineMaxGb(next);
                         setOfflineMaxBytes(Math.max(1, next) * 1024 ** 3);
                       }}
-                      aria-label="Maximum download size in gigabytes"
+                      aria-label="Tamanho máximo de download em gigabytes"
                     />
                     <span className="shrink-0 text-xs text-muted-foreground">GB</span>
                   </span>
@@ -1678,7 +1668,7 @@ export function SettingsPage({
                   }}
                 >
                   <TrashIcon size={18} />
-                  {clearingDownloads ? "Removing..." : "Remove all"}
+                  {clearingDownloads ? "Removendo..." : "Remover tudo"}
                 </button>
               </div>
             </div>
@@ -1687,15 +1677,15 @@ export function SettingsPage({
 
           <section className={SETTINGS_CARD} aria-labelledby="library-quality-title">
             <SettingsCardHeader
-              title="Quality"
+              title="Qualidade"
               titleId="library-quality-title"
               icon={<PlayIcon size={18} aria-hidden="true" />}
-              description="Bitrate picked when a track is streamed or saved."
+              description="Taxa de bits escolhida ao reproduzir ou salvar faixas."
             />
 
             <SettingRow
-              title="Streaming quality"
-              description="Applies to songs played over the network. Lower uses less data."
+              title="Qualidade de reprodução"
+              description="Aplica-se a músicas reproduzidas pela rede. Menor qualidade consome menos dados."
             >
               {(labelId) => (
                 <Select
@@ -1719,8 +1709,8 @@ export function SettingsPage({
 
 
             <SettingRow
-              title="Download quality"
-              description="Applies to songs saved for offline. Higher sounds better and uses more disk."
+              title="Qualidade de download"
+              description="Aplica-se a músicas salvas para ouvir offline. Maior qualidade soa melhor e ocupa mais espaço."
             >
               {(labelId) => (
                 <Select
@@ -1746,15 +1736,15 @@ export function SettingsPage({
 
           <section className={SETTINGS_CARD} aria-labelledby="library-lyrics-title">
             <SettingsCardHeader
-              title="Lyrics"
+              title="Letras"
               titleId="library-lyrics-title"
               icon={<LyricsIcon size={18} aria-hidden="true" />}
-              description="Where lyrics come from and how they read."
+              description="De onde vêm as letras e como são exibidas."
             />
 
             <SettingRow
-              title="Translate lyrics"
-              description="Shows a translation under each line. Sends the lyrics to Google Translate."
+              title="Traduzir letras"
+              description="Mostra a tradução abaixo de cada linha. Envia as letras para o Google Tradutor."
             >
               {(labelId) => (
                 <Select
@@ -1766,7 +1756,7 @@ export function SettingsPage({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={TRANSLATION_OFF}>Off</SelectItem>
+                    <SelectItem value={TRANSLATION_OFF}>Desativado</SelectItem>
                     {TRANSLATION_LANGUAGES.map((code) => (
                       <SelectItem key={code} value={code}>
                         {getLanguageLabel(code)}
@@ -1779,8 +1769,8 @@ export function SettingsPage({
 
 
             <SettingRow
-              title="Lyrics text size"
-              description="Scales the lyrics screen. The size still adapts to the window on top of this."
+              title="Tamanho do texto das letras"
+              description="Ajusta a escala da tela de letras. O tamanho ainda se adapta à janela."
             >
               {(labelId) => (
                 <Select
@@ -1804,8 +1794,8 @@ export function SettingsPage({
 
 
             <SettingRow
-              title="Preferred lyrics source"
-              description="Tried first when a song opens. If it has nothing for that song, the others still run."
+              title="Fonte preferida de letras"
+              description="Consultada primeiro ao abrir uma música. Se não houver letra nela, as outras fontes serão consultadas."
             >
               {(labelId) => (
                 <Select
@@ -1817,7 +1807,7 @@ export function SettingsPage({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value={AUTO_LYRICS_SOURCE}>Automatic</SelectItem>
+                    <SelectItem value={AUTO_LYRICS_SOURCE}>Automático</SelectItem>
                     {LYRICS_SOURCES.map((source) => (
                       <SelectItem key={source.id} value={source.id}>
                         {source.label}
@@ -1832,15 +1822,15 @@ export function SettingsPage({
 
           <section className={SETTINGS_CARD} aria-labelledby="library-system-title">
             <SettingsCardHeader
-              title="System"
+              title="Sistema"
               titleId="library-system-title"
               icon={<SettingsIcon size={18} aria-hidden="true" />}
-              description="How Zuno behaves outside the window."
+              description="Como o YouTune se comporta fora da janela."
             />
 
             <SettingToggle
-              title="Launch at startup"
-              description="Start Zuno when your computer starts."
+              title="Iniciar com o sistema"
+              description="Inicia o YouTune automaticamente ao ligar o computador."
               checked={autostartEnabled}
               disabled={autostartLoading}
               onCheckedChange={(checked) => void handleAutostartChange(checked)}
@@ -1850,16 +1840,16 @@ export function SettingsPage({
 
 
             <SettingToggle
-              title="Minimize to tray"
-              description="Closing the window hides Zuno to the system tray and keeps playing. Quit from the tray icon."
+              title="Minimizar para a bandeja"
+              description="Fechar a janela oculta o YouTune na bandeja do sistema e mantém a música tocando. Saia pelo ícone da bandeja."
               checked={minimizeToTray}
               onCheckedChange={setMinimizeToTray}
             />
 
 
             <SettingToggle
-              title="Remember window size and location"
-              description="Reopen the main window with its last size and screen position."
+              title="Lembrar tamanho e posição da janela"
+              description="Reabre a janela principal com o último tamanho e posição na tela."
               checked={mainWindowGeometryPersistenceEnabled}
               onCheckedChange={setMainWindowGeometryPersistenceEnabled}
             />
@@ -1869,16 +1859,16 @@ export function SettingsPage({
 
           <section className={SETTINGS_CARD} aria-labelledby="library-trouble-title">
             <SettingsCardHeader
-              title="Troubleshooting"
+              title="Solução de problemas"
               titleId="library-trouble-title"
               icon={<BugIcon size={18} aria-hidden="true" />}
-              description="Diagnostics, and the irreversible reset."
+              description="Diagnósticos e restauração completa irreversível."
             />
 
             <div className="flex flex-wrap items-center justify-between gap-3">
               <span className={cn(SETTING_LABEL, "min-w-0 flex-1")}>
-                <strong>Application log</strong>
-                <span>Open the current log file for sharing or troubleshooting.</span>
+                <strong>Registro do aplicativo (Log)</strong>
+                <span>Abre o arquivo de registro atual para compartilhamento ou diagnóstico.</span>
               </span>
               <button
                 className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-card disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
@@ -1887,7 +1877,7 @@ export function SettingsPage({
                 onClick={() => void handleOpenLog()}
               >
                 <LogFileIcon size={18} />
-                {logOpening ? "Opening..." : "Open log"}
+                {logOpening ? "Abrindo..." : "Abrir registro"}
               </button>
             </div>
 
@@ -1896,8 +1886,8 @@ export function SettingsPage({
 
             <div className="flex flex-wrap items-center justify-between gap-3">
               <span className={cn(SETTING_LABEL, "min-w-0 flex-1")}>
-                <strong>Delete all app data</strong>
-                <span>Reset settings, cache, account, queue, tabs, onboarding, and local data.</span>
+                <strong>Excluir todos os dados do app</strong>
+                <span>Redefine configurações, cache, conta, fila, abas, introdução e dados locais.</span>
               </span>
               <button
                 className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-destructive transition-colors hover:bg-destructive/10 disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
@@ -1907,10 +1897,10 @@ export function SettingsPage({
               >
                 <TrashIcon size={18} />
                 {resetSettingsBusy
-                  ? "Deleting..."
+                  ? "Excluindo..."
                   : resetSettingsConfirming
-                    ? "Press again to confirm"
-                    : "Delete everything"}
+                    ? "Pressione novamente para confirmar"
+                    : "Excluir tudo"}
               </button>
             </div>
 
@@ -1920,20 +1910,20 @@ export function SettingsPage({
       )}
 
       {activeTab === "shortcuts" && (
-        <div className="flex flex-col gap-5" role="tabpanel" aria-label="Keyboard shortcut settings">
+        <div className="flex flex-col gap-5" role="tabpanel" aria-label="Configurações de atalhos de teclado">
           <section className={SETTINGS_CARD} aria-labelledby="keyboard-shortcuts-settings-title">
             <h2
               className="text-lg font-semibold text-foreground"
               id="keyboard-shortcuts-settings-title"
             >
-              Keyboard shortcuts
+              Atalhos de teclado
             </h2>
 
             <div className="flex flex-col gap-5">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <span className={cn(SETTING_LABEL, "min-w-0 flex-1")}>
-                  <strong>Reset shortcuts</strong>
-                  <span>Restore every keyboard shortcut to its default.</span>
+                  <strong>Restaurar atalhos</strong>
+                  <span>Restaura todos os atalhos de teclado para o padrão.</span>
                 </span>
                 <button
                   className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-card disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
@@ -1941,7 +1931,7 @@ export function SettingsPage({
                   onClick={resetKeyboardShortcuts}
                 >
                   <RefreshIcon size={18} />
-                  Reset all
+                  Restaurar todos
                 </button>
               </div>
 
@@ -1966,14 +1956,14 @@ export function SettingsPage({
                           if (isListening) setListeningShortcut(null);
                         }}
                       >
-                        {isListening ? "Press shortcut..." : formatKeyboardShortcut(shortcut)}
+                        {isListening ? "Pressione o atalho..." : formatKeyboardShortcut(shortcut)}
                       </button>
                       <button
                         className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-card disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
                         type="button"
                         onClick={() => resetKeyboardShortcut(shortcutAction.id)}
                       >
-                        Reset
+                        Restaurar
                       </button>
                       <button
                         className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-card disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
@@ -1981,7 +1971,7 @@ export function SettingsPage({
                         disabled={!shortcut}
                         onClick={() => setKeyboardShortcut(shortcutAction.id, null)}
                       >
-                        Clear
+                        Limpar
                       </button>
                     </div>
                   </div>
@@ -1993,25 +1983,25 @@ export function SettingsPage({
       )}
 
       {activeTab === "window" && (
-        <div className="flex flex-col gap-5" role="tabpanel" aria-label="Style settings">
+        <div className="flex flex-col gap-5" role="tabpanel" aria-label="Configurações de janela e estilo">
           <section className={SETTINGS_CARD} aria-labelledby="window-settings-title">
             <SettingsCardHeader
-              title="Window controls"
+              title="Controles da janela"
               titleId="window-settings-title"
               icon={<QueuePanelIcon size={18} aria-hidden="true" />}
-              description="Choose the title bar buttons and compact player behavior."
+              description="Escolha os botões da barra de título e o comportamento do player compacto."
             />
 
             <SettingToggle
               title="Mini player"
-              description="Show compact playback controls when the main window is not focused. Turning this off closes its window and frees around 30 MB."
+              description="Mostra controles compactos quando a janela principal não está em foco. Desativar fecha sua janela e libera cerca de 30 MB."
               checked={miniPlayerEnabled}
               onCheckedChange={setMiniPlayerEnabled}
             />
 
             <SettingRow
-              title="Library sidebar"
-              description="How much room the playlist rail takes. Expand on hover keeps the collapsed width while still letting you read the list."
+              title="Barra lateral da biblioteca"
+              description="Quanto espaço a barra de playlists ocupa. 'Expandir ao passar o cursor' mantém o tamanho compacto enquanto permite ler os nomes."
             >
               {() => (
                 <Select
@@ -2034,8 +2024,8 @@ export function SettingsPage({
             </SettingRow>
 
             <SettingRow
-              title="Mini player hover bar"
-              description="Choose what the expanded hover slider controls."
+              title="Barra de foco do mini player"
+              description="Escolha o que a barra deslizante expandida controla."
             >
               {() => (
                 <Select
@@ -2048,7 +2038,7 @@ export function SettingsPage({
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="seek">Song position</SelectItem>
+                    <SelectItem value="seek">Posição da música</SelectItem>
                     <SelectItem value="volume">Volume</SelectItem>
                   </SelectContent>
                 </Select>
@@ -2057,8 +2047,8 @@ export function SettingsPage({
 
             <div className="flex items-center justify-between gap-4 py-2">
               <span className={SETTING_LABEL}>
-                <strong>Mini player position</strong>
-                <span>Move the mini player back to the bottom center of this screen.</span>
+                <strong>Posição do mini player</strong>
+                <span>Move o mini player de volta para o canto inferior central da tela.</span>
               </span>
               <button
                 className="flex items-center gap-2 rounded-full px-4 py-2 text-sm font-medium text-foreground transition-colors hover:bg-card disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
@@ -2066,15 +2056,15 @@ export function SettingsPage({
                 disabled={miniPlayerResetting}
                 onClick={() => void handleResetMiniPlayerPosition()}
               >
-                {miniPlayerResetting ? "Resetting..." : "Reset position"}
+                {miniPlayerResetting ? "Redefinindo..." : "Redefinir posição"}
               </button>
             </div>
 
             <SettingRow
-              title="Window controls"
+              title="Estilo dos botões da janela"
               description={isLinux
-                ? "How minimize, maximize and close are drawn. Switching OS native restarts the app."
-                : "How minimize, maximize and close are drawn."}
+                ? "Como minimizar, maximizar e fechar são desenhados. Alternar para o nativo do SO reinicia o app."
+                : "Como os botões de minimizar, maximizar e fechar são desenhados."}
             >
               {(labelId) => (
                 <div role="group" aria-labelledby={labelId}>
@@ -2087,7 +2077,7 @@ export function SettingsPage({
                     <TabsList>
                       <TabsTrigger value="macos">macOS</TabsTrigger>
                       <TabsTrigger value="windows">Windows</TabsTrigger>
-                      <TabsTrigger value="native">OS native</TabsTrigger>
+                      <TabsTrigger value="native">Nativo do SO</TabsTrigger>
                     </TabsList>
                   </Tabs>
                 </div>
@@ -2098,8 +2088,8 @@ export function SettingsPage({
                 and off tiling compositors the buttons already show without this. */}
             {isLinux && tilingWindowManager && windowControlStyle !== "native" && (
               <SettingToggle
-                title="Show on this compositor"
-                description="Tiling compositors don't draw window buttons for apps, so they're hidden by default. Turn this on to show them anyway."
+                title="Mostrar neste compositor"
+                description="Compositores lado a lado (tiling) não desenham botões de janela por padrão. Ative para exibi-los mesmo assim."
                 checked={forceWindowControls}
                 onCheckedChange={setForceWindowControls}
               />
@@ -2107,8 +2097,8 @@ export function SettingsPage({
 
             {isLinux && (
               <SettingToggle
-                title="Show in system media controls"
-                description="Expose playback to the desktop's media widget and media keys (MPRIS). Turning this off stops the now-playing notifications some desktops show."
+                title="Mostrar nos controles de mídia do sistema"
+                description="Integra a reprodução aos controles de mídia e teclas multimídia do sistema (MPRIS)."
                 checked={linuxMediaSession}
                 onCheckedChange={setLinuxMediaSession}
               />
@@ -2117,19 +2107,19 @@ export function SettingsPage({
 
           <section className={SETTINGS_CARD} aria-labelledby="behavior-settings-title">
             <div className="flex items-center gap-2">
-              <h2 className="text-lg" id="behavior-settings-title">Behavior</h2>
+              <h2 className="text-lg" id="behavior-settings-title">Comportamento</h2>
             </div>
 
             <SettingToggle
-              title="Compact player bar"
-              description="Tuck the seek bar under the transport controls instead of spanning the full width."
+              title="Barra do player compacta"
+              description="Encaixa a barra de progresso abaixo dos controles em vez de ocupar toda a largura."
               checked={compactPlayerBar}
               onCheckedChange={setCompactPlayerBar}
             />
 
             <SettingToggle
-              title="Always show extra controls"
-              description="Keep lyrics and queue visible instead of showing them only on hover."
+              title="Sempre mostrar controles extras"
+              description="Mantém letras e fila visíveis em vez de exibi-los apenas ao passar o cursor."
               checked={extraPlayerControlsAlwaysVisible}
               onCheckedChange={setExtraPlayerControlsAlwaysVisible}
             />
@@ -2138,21 +2128,44 @@ export function SettingsPage({
       )}
 
       {activeTab === "playback" && (
-        <div className="flex flex-col gap-5" role="tabpanel" aria-label="Playback settings">
+        <div className="flex flex-col gap-5" role="tabpanel" aria-label="Configurações de reprodução">
+          <section className={SETTINGS_CARD} aria-labelledby="adblock-settings-title">
+            <SettingsCardHeader
+              title="Sem Anúncios e Carregamento Rápido"
+              titleId="adblock-settings-title"
+              icon={<SpeedIcon size={18} aria-hidden="true" />}
+              description="Elimine comerciais e acelere o início de reprodução das músicas."
+            />
+
+            <SettingToggle
+              title="Bloquear anúncios nas músicas"
+              description="Transmite diretamente dos servidores de áudio de alta velocidade (googlevideo), garantindo reprodução 100% contínua e sem nenhuma interrupção por anúncios ou comerciais."
+              checked={adBlockEnabled}
+              onCheckedChange={setAdBlockEnabled}
+            />
+
+            <SettingToggle
+              title="Carregamento e pré-aquecimento ultrarrápido"
+              description="Pré-aquece a conexão e mantém os tokens de áudio em cache em segundo plano para que qualquer música comece a tocar instantaneamente ao clicar."
+              checked={fastLoadingEnabled}
+              onCheckedChange={setFastLoadingEnabled}
+            />
+          </section>
+
           <section className={SETTINGS_CARD} aria-labelledby="playback-engine-title">
             <SettingsCardHeader
-              title="Audio engine"
+              title="Motor de áudio"
               titleId="playback-engine-title"
               icon={<PlayIcon size={18} aria-hidden="true" />}
-              description="What actually plays the sound."
+              description="O que realmente reproduz o som."
             />
 
             <SettingRow
-              title="Playback method"
+              title="Método de reprodução"
               description={
                 audioEngineMode === "native"
-                  ? "Zuno plays each track itself. About 90 MB lighter, slower to start, no gapless or crossfade."
-                  : "A hidden YouTube frame plays each track. Costs about 90 MB, starts faster, required for gapless and crossfade."
+                  ? "O YouTune reproduz cada faixa nativamente. Cerca de 90 MB mais leve, início um pouco mais lento, sem transição contínua ou crossfade."
+                  : "Um player integrado do YouTube reproduz cada faixa. Consome cerca de 90 MB a mais, inicia mais rápido, necessário para reprodução contínua e crossfade."
               }
             >
               {() => (
@@ -2176,7 +2189,7 @@ export function SettingsPage({
             </SettingRow>
 
             <p className="px-1 text-xs text-muted-foreground">
-              Applies from the next track.
+              Aplica-se a partir da próxima música.
             </p>
 
             <OutputDeviceSetting engineMode={audioEngineMode} />
@@ -2184,15 +2197,15 @@ export function SettingsPage({
             <EqualizerSettings engineMode={audioEngineMode} />
 
             <SettingToggle
-              title="Resolve streams as your account"
-              description="Attaches your session when resolving a track — required for Premium bitrates. Downloads always resolve anonymously."
+              title="Obter streams com sua conta"
+              description="Anexa sua sessão ao obter faixas — necessário para taxas de bits do plano Premium. Downloads sempre são obtidos anonimamente."
               checked={authenticatedStreaming}
               onCheckedChange={setAuthenticatedStreaming}
             />
 
             <SettingToggle
-              title="Add plays to YouTube Music history"
-              description="Reports plays to YouTube, feeding its recommendations. Also enables the setting above. The YouTube frame always reports its own."
+              title="Adicionar reproduções ao histórico do YouTube Music"
+              description="Registra as reproduções no YouTube, melhorando suas recomendações. Também ativa a opção acima."
               checked={youtubeScrobbling}
               onCheckedChange={(enabled) => {
                 // Paired here rather than inside the setter, so the toolbar shortcut can flip
@@ -2205,15 +2218,15 @@ export function SettingsPage({
 
           <section className={SETTINGS_CARD} aria-labelledby="playback-settings-title">
             <SettingsCardHeader
-              title="Transitions"
+              title="Transições"
               titleId="playback-settings-title"
               icon={<PlayIcon size={18} aria-hidden="true" />}
-              description="How one track becomes the next."
+              description="Como uma música faz a transição para a próxima."
             />
 
             <SettingToggle
-              title="Gapless playback"
-              description="Load the next track while the current one is still playing, so albums and live sets run without a pause between songs."
+              title="Reprodução contínua (Gapless)"
+              description="Carrega a próxima faixa enquanto a atual ainda toca, para que álbuns e shows toquem sem pausas entre as músicas."
               checked={gaplessEnabled}
               onCheckedChange={setGaplessEnabled}
             />
@@ -2222,10 +2235,10 @@ export function SettingsPage({
               title="Crossfade"
               description={
                 crossfadeSec > 0
-                  ? `Overlap each track with the next by ${crossfadeSec} second${
+                  ? `Sobrepõe cada faixa com a próxima por ${crossfadeSec} segundo${
                     crossfadeSec === 1 ? "" : "s"
                   }.`
-                  : "Off. Move the slider to overlap the end of each track with the start of the next."
+                  : "Desativado. Ajuste a barra para sobrepor o final de cada música com o início da próxima."
               }
             >
               {(labelId) => (
@@ -2237,13 +2250,13 @@ export function SettingsPage({
                     max={MAX_CROSSFADE_SEC}
                     step={1}
                     onValueChange={setCrossfadeSec}
-                    aria-label="Crossfade length in seconds"
+                    aria-label="Duração do crossfade em segundos"
                   />
                   <span
                     id={labelId}
                     className="w-10 shrink-0 text-right text-sm tabular-nums text-muted-foreground"
                   >
-                    {crossfadeSec > 0 ? `${crossfadeSec}s` : "Off"}
+                    {crossfadeSec > 0 ? `${crossfadeSec}s` : "Desativado"}
                   </span>
                 </span>
               )}
@@ -2255,21 +2268,21 @@ export function SettingsPage({
               leaving people to wonder why it only sometimes works.
             */}
             <p className="text-sm text-muted-foreground">
-              Both apply to streamed tracks. Downloaded and local files always play back to back.
+              Ambos se aplicam a faixas reproduzidas via streaming. Músicas locais ou baixadas sempre tocam em sequência direta.
             </p>
           </section>
 
           <section className={SETTINGS_CARD} aria-labelledby="session-settings-title">
             <SettingsCardHeader
-              title="Session"
+              title="Sessão"
               titleId="session-settings-title"
               icon={<QueuePanelIcon size={18} aria-hidden="true" />}
-              description="What comes back when you reopen Zuno."
+              description="O que é restaurado quando você reabre o YouTune."
             />
 
             <SettingToggle
-              title="Restore tabs and queues"
-              description="Reopen your tabs, queues and playback position on launch. Playback always starts paused."
+              title="Restaurar abas e filas"
+              description="Reabre suas abas, filas e posição de reprodução ao iniciar. A reprodução sempre inicia pausada."
               checked={sessionRestoreEnabled}
               onCheckedChange={setSessionRestoreEnabled}
             />
@@ -2278,13 +2291,13 @@ export function SettingsPage({
       )}
 
       {activeTab === "appearance" && (
-        <div className="flex flex-col gap-5" role="tabpanel" aria-label="Appearance settings">
+        <div className="flex flex-col gap-5" role="tabpanel" aria-label="Configurações de aparência">
           <section className={SETTINGS_CARD} aria-labelledby="theme-settings-title">
             <SettingsCardHeader
-              title="Theme"
+              title="Tema"
               titleId="theme-settings-title"
               icon={<PaletteIcon size={18} aria-hidden="true" />}
-              description="Applies instantly across both windows."
+              description="Aplica-se instantaneamente em todas as janelas."
             />
 
             <div
@@ -2332,11 +2345,88 @@ export function SettingsPage({
             </div>
           </section>
 
+          <section className={SETTINGS_CARD} aria-labelledby="accent-color-title">
+            <SettingsCardHeader
+              title="Cor dos botões e destaques"
+              titleId="accent-color-title"
+              icon={<PaletteIcon size={18} aria-hidden="true" />}
+              description="Escolha a cor principal dos botões, controles de reprodução e destaques visuais."
+            />
+
+            <div className="flex flex-col gap-4">
+              <div
+                className="grid grid-cols-3 gap-2.5 sm:grid-cols-5"
+                role="radiogroup"
+                aria-label="Cores de destaque"
+              >
+                {ACCENT_COLOR_PRESETS.map((preset) => {
+                  const isSelected = accentColor.toLowerCase() === preset.value.toLowerCase();
+                  return (
+                    <button
+                      key={preset.id}
+                      type="button"
+                      role="radio"
+                      aria-checked={isSelected}
+                      onClick={() => setAccentColor(preset.value)}
+                      className={cn(
+                        "flex flex-col items-center gap-2 rounded-xl border p-2.5 transition-all",
+                        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
+                        isSelected
+                          ? "border-primary bg-primary/10 shadow-sm"
+                          : "border-border/60 bg-background/40 hover:border-border hover:bg-card",
+                      )}
+                    >
+                      <span
+                        className="flex size-7 items-center justify-center rounded-full text-white shadow-inner ring-2 ring-white/10 transition-transform"
+                        style={{ backgroundColor: preset.value }}
+                      >
+                        {isSelected && <CheckIcon size={14} strokeWidth={2.5} />}
+                      </span>
+                      <span className="truncate text-xs font-medium text-foreground">
+                        {preset.name}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-border pt-3">
+                <span className="flex flex-col">
+                  <span className="text-sm font-medium text-foreground">Cor personalizada</span>
+                  <span className="text-xs text-muted-foreground">Escolha qualquer tonalidade via seletor de cores</span>
+                </span>
+                <div className="flex items-center gap-2">
+                  <input
+                    type="color"
+                    value={accentColor}
+                    onChange={(e) => setAccentColor(e.target.value)}
+                    className="size-9 cursor-pointer rounded-lg border border-border bg-background p-1"
+                    title="Seletor de cor personalizada"
+                    aria-label="Seletor de cor personalizada"
+                  />
+                  <input
+                    type="text"
+                    value={accentColor.toUpperCase()}
+                    onChange={(e) => {
+                      const val = e.target.value;
+                      if (/^#[0-9A-Fa-f]{0,6}$/.test(val)) {
+                        setAccentColor(val);
+                      }
+                    }}
+                    maxLength={7}
+                    className={cn(SETTINGS_FIELD, "w-24 text-center font-mono text-xs uppercase")}
+                    aria-label="Código Hex da cor"
+                  />
+                </div>
+              </div>
+            </div>
+          </section>
+
           <section className={SETTINGS_CARD} aria-labelledby="toolbar-settings-title">
             <div className="min-w-0">
-              <h2 className="text-lg" id="toolbar-settings-title">Title bar</h2>
+              <h2 className="text-lg" id="toolbar-settings-title">Barra de título</h2>
               <p className="text-sm text-muted-foreground">
-                Which optional buttons sit next to the window controls.
+                Quais botões opcionais ficam ao lado dos controles da janela.
               </p>
             </div>
 
@@ -2347,15 +2437,15 @@ export function SettingsPage({
 
           <section className={SETTINGS_CARD} aria-labelledby="home-settings-title">
             <div className="min-w-0">
-              <h2 className="text-lg" id="home-settings-title">Home</h2>
+              <h2 className="text-lg" id="home-settings-title">Início</h2>
               <p className="text-sm text-muted-foreground">
-                Which sections the home page shows.
+                Quais seções a página inicial exibe.
               </p>
             </div>
 
             <SettingToggle
-              title="Made for you"
-              description="The recommendation carousel at the top. Hiding it leaves the surprise button and More recommendations working."
+              title="Feito para você"
+              description="O carrossel de recomendações no topo. Ocultá-lo mantém o botão de surpresa e mais recomendações funcionando."
               checked={madeForYouVisible}
               onCheckedChange={setMadeForYouVisible}
             />
@@ -2363,9 +2453,9 @@ export function SettingsPage({
 
           <section className={SETTINGS_CARD} aria-labelledby="motion-settings-title">
             <div className="min-w-0">
-              <h2 className="text-lg" id="motion-settings-title">Motion &amp; performance</h2>
+              <h2 className="text-lg" id="motion-settings-title">Movimento e desempenho</h2>
               <p className="text-sm text-muted-foreground">
-                Turn these off on low-powered machines.
+                Desative essas opções em computadores mais modestos.
               </p>
             </div>
 

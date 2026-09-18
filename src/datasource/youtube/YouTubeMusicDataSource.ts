@@ -15,6 +15,7 @@ import { createSerialQueue } from "../../internal/asyncQueue";
 import { clearCache, getCachedJson, setCachedJson } from "../../internal/cache";
 import { logInternalDebug, logInternalError, logInternalInfo, logInternalWarn } from "../../internal/logging";
 import { mintPoToken, warmPoToken } from "./poToken";
+import { isAdBlockEnabled, isFastLoadingEnabled } from "../../ui/settings/adBlockAndSpeed";
 import { AuthExpiredError, DataSource, type StreamData } from "../DataSource";
 import type {
   AccountOption,
@@ -447,10 +448,17 @@ export class YouTubeMusicDataSource extends DataSource {
   private readonly recommendationRefreshPromises = new Map<string, Promise<Track[]>>();
   private readonly lyricsRefreshPromises = new Map<string, Promise<Lyrics>>();
   private readonly artistSubscriptionOverrides = new Map<string, { subscribed: boolean; expiresAt: number }>();
+  private readonly streamUrlCache = new Map<
+    string,
+    { url: string; mimeType: string; cookie?: string; expiresAt: number }
+  >();
 
   constructor() {
     super();
     this.setupJavaScriptEvaluator();
+    if (isFastLoadingEnabled()) {
+      this.warmPlayback();
+    }
   }
 
   private setupJavaScriptEvaluator() {
@@ -4957,7 +4965,7 @@ export class YouTubeMusicDataSource extends DataSource {
   private getLyricsRequestHeaders(): Record<string, string> {
     return {
       Accept: "application/json",
-      "User-Agent": "Zuno/1.0",
+      "User-Agent": "YouTune/1.0",
     };
   }
 
@@ -5588,6 +5596,13 @@ export class YouTubeMusicDataSource extends DataSource {
     quality: AudioQuality,
     clientOrder: readonly ClientLabel[],
   ): Promise<{ url: string; mimeType: string; cookie?: string }> {
+    const cacheKey = `${track.id}:${quality}`;
+    const cached = this.streamUrlCache.get(cacheKey);
+    if (cached && Date.now() < cached.expiresAt) {
+      logInternalInfo("YouTubeMusicDataSource.resolveStream cache hit", { trackId: track.id });
+      return { url: cached.url, mimeType: cached.mimeType, cookie: cached.cookie };
+    }
+
     let streamUrl: string | null = null;
     let streamMimeType = "audio/mp4";
 
@@ -5600,10 +5615,14 @@ export class YouTubeMusicDataSource extends DataSource {
       try {
         const resolveWithClient = async (): Promise<void> => {
           const yt = await this.getClient(label);
-          // Only the download client is attested; music and web are fallbacks whose URLs are
-          // gated at 1 MiB regardless, and minting for them would just be wasted work.
+          // Download client is always attested. In ad-block/direct mode, attest fallbacks too
+          // so fallback clients also produce full-length ungated audio streams.
           const poToken =
-            label === "download" ? await this.attestForTrack(yt, track.id) : undefined;
+            label === "download"
+              ? await this.attestForTrack(yt, track.id)
+              : isAdBlockEnabled()
+                ? await this.attestForTrack(yt, track.id).catch(() => undefined)
+                : undefined;
           const info = await yt.getBasicInfo(track.id, poToken ? { po_token: poToken } : undefined);
           /*
            * MP4 preferred, any audio accepted.
@@ -5701,11 +5720,22 @@ export class YouTubeMusicDataSource extends DataSource {
       throw new Error("Unable to resolve a playable audio stream.");
     }
 
-    return {
+    const resolved = {
       url: streamUrl,
       mimeType: streamMimeType,
       cookie: this.musicCookie ?? undefined,
     };
+
+    if (this.streamUrlCache.size > 150) {
+      const oldestKey = this.streamUrlCache.keys().next().value;
+      if (oldestKey) this.streamUrlCache.delete(oldestKey);
+    }
+    this.streamUrlCache.set(cacheKey, {
+      ...resolved,
+      expiresAt: Date.now() + 45 * 60 * 1000,
+    });
+
+    return resolved;
   }
 
   /**

@@ -36,14 +36,14 @@ export function DownloadButton() {
   const progress = isDownloading ? offline.progress : null;
 
   const label = isReady
-    ? "Remove download"
+    ? "Remover download"
     : isDownloading
       ? progress === null
-        ? "Downloading — cancel"
-        : `Downloading, ${Math.round(progress)}% — cancel`
+        ? "Baixando — cancelar"
+        : `Baixando, ${Math.round(progress)}% — cancelar`
       : isQueued
-        ? `Queued to download, ${queuePosition + 1} in line — cancel`
-        : "Download for offline";
+        ? `Na fila de download (${queuePosition + 1}º) — cancelar`
+        : "Baixar para ouvir offline";
 
   const onClick = () => {
     if (isReady) void removeDownload(track.id);

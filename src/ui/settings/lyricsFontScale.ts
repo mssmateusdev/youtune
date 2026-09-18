@@ -13,10 +13,10 @@ const CHANGE_EVENT = "lyrics-font-scale-change";
 export const DEFAULT_LYRICS_FONT_SCALE = 1;
 
 export const LYRICS_FONT_SCALES = [
-  { value: 0.85, label: "Small" },
-  { value: 1, label: "Default" },
-  { value: 1.2, label: "Large" },
-  { value: 1.45, label: "Extra large" },
+  { value: 0.85, label: "Pequeno" },
+  { value: 1, label: "Padrão" },
+  { value: 1.2, label: "Grande" },
+  { value: 1.45, label: "Muito grande" },
 ];
 
 /** Snapped to a known step: a hand-edited localStorage value must not produce 40rem lyrics. */

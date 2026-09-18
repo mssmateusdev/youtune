@@ -15,8 +15,8 @@ interface Stage {
 
 const LIBRARY_STAGE: Stage = {
   id: "library",
-  title: "Fetching your account",
-  description: "Loading your channel, playlists, albums and liked songs.",
+  title: "Obtendo sua conta",
+  description: "Carregando seu canal, playlists, álbuns e músicas curtidas.",
   Icon: PlaylistIcon,
 };
 
@@ -35,14 +35,14 @@ const STAGES_BY_FLOW: Record<AuthFlow, ReadonlyArray<Stage>> = {
   "sign-in": [
     {
       id: "browser",
-      title: "Signing in",
-      description: "Finish signing in to YouTube Music in the window that opened.",
+      title: "Fazendo login",
+      description: "Conclua o login no YouTube Music na janela que se abriu.",
       Icon: LoginIcon,
     },
     {
       id: "session",
-      title: "Securing your session",
-      description: "Confirming the account and clearing anything cached from before.",
+      title: "Protegendo sua sessão",
+      description: "Confirmando a conta e limpando caches anteriores.",
       Icon: GlobalIcon,
     },
     LIBRARY_STAGE,
@@ -50,8 +50,8 @@ const STAGES_BY_FLOW: Record<AuthFlow, ReadonlyArray<Stage>> = {
   "account-switch": [
     {
       id: "session",
-      title: "Switching channel",
-      description: "Handing over to the new channel and clearing the previous one's cache.",
+      title: "Alternando canal",
+      description: "Mudando para o novo canal e limpando o cache anterior.",
       Icon: UserIcon,
     },
     LIBRARY_STAGE,
@@ -59,8 +59,8 @@ const STAGES_BY_FLOW: Record<AuthFlow, ReadonlyArray<Stage>> = {
   "google-account-switch": [
     {
       id: "session",
-      title: "Switching account",
-      description: "Handing over to the other account and clearing the previous one's cache.",
+      title: "Alternando conta",
+      description: "Mudando para a outra conta e limpando o cache anterior.",
       Icon: UserIcon,
     },
     LIBRARY_STAGE,
@@ -69,19 +69,19 @@ const STAGES_BY_FLOW: Record<AuthFlow, ReadonlyArray<Stage>> = {
 
 const HEADINGS: Record<AuthFlow, { title: string; waiting: string; working: string }> = {
   "sign-in": {
-    title: "Connecting to YouTube Music",
-    waiting: "This waits on you — the rest takes a few seconds.",
-    working: "Nearly there. Keep this window open.",
+    title: "Conectando ao YouTube Music",
+    waiting: "Aguardando você — o restante levará poucos segundos.",
+    working: "Quase lá. Mantenha esta janela aberta.",
   },
   "account-switch": {
-    title: "Switching channel",
-    waiting: "Moving your library over to the new channel.",
-    working: "Nearly there. Keep this window open.",
+    title: "Alternando canal",
+    waiting: "Movendo sua biblioteca para o novo canal.",
+    working: "Quase lá. Mantenha esta janela aberta.",
   },
   "google-account-switch": {
-    title: "Switching account",
-    waiting: "Moving your library over to the other account.",
-    working: "Nearly there. Keep this window open.",
+    title: "Alternando conta",
+    waiting: "Movendo sua biblioteca para a outra conta.",
+    working: "Quase lá. Mantenha esta janela aberta.",
   },
 };
 
@@ -144,7 +144,7 @@ export function AuthOverlay({ progress, onCancel }: AuthOverlayProps) {
               }
               note={
                 stage.id === "library" && isRetrying
-                  ? `Still syncing — attempt ${progress.attempt} of ${progress.attemptCount}.`
+                  ? `Ainda sincronizando — tentativa ${progress.attempt} de ${progress.attemptCount}.`
                   : null
               }
             />
@@ -157,7 +157,7 @@ export function AuthOverlay({ progress, onCancel }: AuthOverlayProps) {
             type="button"
             onClick={onCancel}
           >
-            Cancel
+            Cancelar
           </button>
         )}
       </div>

@@ -77,7 +77,7 @@ function formatRemaining(...sections: QueueEntry[][]): string | null {
 
   const hours = Math.floor(seconds / 3600);
   const minutes = Math.round((seconds % 3600) / 60);
-  return hours > 0 ? `${hours} hr ${minutes} min` : `${minutes} min`;
+  return hours > 0 ? `${hours} h ${minutes} min` : `${minutes} min`;
 }
 
 /**
@@ -146,7 +146,7 @@ const QueueRow = memo(function QueueRow({
         )}
         onPointerDown={(event) => onPointerDown(event, absoluteIndex, section)}
         onClick={() => onPlay(absoluteIndex)}
-        aria-label={collapsed ? `Play ${track.title}` : undefined}
+        aria-label={collapsed ? `Tocar ${track.title}` : undefined}
       >
         {/* The cover carries the position and the play affordance so the row needs no
             separate number column — that is what buys back the width when collapsed. */}
@@ -196,7 +196,7 @@ const QueueRow = memo(function QueueRow({
               : "opacity-0 focus-within:opacity-100 group-hover/queue-item:opacity-100",
           )}
         >
-          <Tooltip content={isStopAfter ? "Don't end queue here" : "End queue after this"}>
+          <Tooltip content={isStopAfter ? "Não parar fila aqui" : "Parar reprodução após esta faixa"}>
             <button
               type="button"
               className={cn(ICON_BUTTON, isStopAfter && "text-primary")}
@@ -205,11 +205,11 @@ const QueueRow = memo(function QueueRow({
             >
               <PauseIcon size={15} aria-hidden="true" />
               <span className="sr-only">
-                {isStopAfter ? "Don't end queue here" : "End queue after this"}
+                {isStopAfter ? "Não parar fila aqui" : "Parar reprodução após esta faixa"}
               </span>
             </button>
           </Tooltip>
-          <Tooltip content="Generate a new queue from here">
+          <Tooltip content="Gerar nova fila a partir daqui">
             <button
               type="button"
               className={cn(ICON_BUTTON, isGenerating && "text-primary")}
@@ -221,17 +221,17 @@ const QueueRow = memo(function QueueRow({
                 aria-hidden="true"
                 className={isGenerating ? "motion-safe:animate-spin" : undefined}
               />
-              <span className="sr-only">Generate a new queue from here</span>
+              <span className="sr-only">Gerar nova fila a partir daqui</span>
             </button>
           </Tooltip>
-          <Tooltip content="Remove from queue">
+          <Tooltip content="Remover da fila">
             <button
               type="button"
               className={cn(ICON_BUTTON, "hover:text-primary")}
               onClick={() => onRemove(absoluteIndex)}
             >
               <TrashIcon size={15} aria-hidden="true" />
-              <span className="sr-only">{`Remove ${track.title} from queue`}</span>
+              <span className="sr-only">{`Remover ${track.title} da fila`}</span>
             </button>
           </Tooltip>
         </span>
@@ -303,7 +303,7 @@ function ShowMoreQueueButton({
   remaining: number;
   onClick: () => void;
 }) {
-  const label = `Show ${Math.min(AUTOMATIC_PAGE_SIZE, remaining)} more`;
+  const label = `Mostrar mais ${Math.min(AUTOMATIC_PAGE_SIZE, remaining)}`;
   const button = (
     <button
       type="button"
@@ -662,7 +662,7 @@ export function QueuePanel({ onClose }: QueuePanelProps) {
         // Dragging over rows must not select their text.
         draggedIndex !== null && "select-none",
       )}
-      aria-label="Queue"
+      aria-label="Fila de reprodução"
     >
       <header
         className={cn(
@@ -672,23 +672,23 @@ export function QueuePanel({ onClose }: QueuePanelProps) {
       >
         <Tooltip
           side={collapsed ? "left" : "bottom"}
-          content={collapsed ? "Expand queue" : "Collapse queue"}
+          content={collapsed ? "Expandir fila" : "Recolher fila"}
         >
           <button type="button" className={ICON_BUTTON} onClick={toggleQueuePanelCollapsed}>
             {collapsed ? (
-              <SquareAltArrowLeftIcon size={22} aria-hidden="true" />
+               <SquareAltArrowLeftIcon size={22} aria-hidden="true" />
             ) : (
               <SquareAltArrowRightIcon size={22} aria-hidden="true" />
             )}
-            <span className="sr-only">{collapsed ? "Expand queue" : "Collapse queue"}</span>
+            <span className="sr-only">{collapsed ? "Expandir fila" : "Recolher fila"}</span>
           </button>
         </Tooltip>
 
         {!collapsed && (
           <div className="flex min-w-0 flex-1 flex-col">
-            <h2 className="text-sm font-semibold text-foreground">Up next</h2>
+            <h2 className="text-sm font-semibold text-foreground">A seguir</h2>
             <p className="flex items-center gap-1 truncate text-[11px] text-muted-foreground">
-              <span>{upcomingCount === 0 ? "Nothing queued" : `${upcomingCount} songs`}</span>
+              <span>{upcomingCount === 0 ? "Fila vazia" : `${upcomingCount} músicas`}</span>
               {remaining && (
                 <>
                   <ClockIcon size={11} aria-hidden="true" />
@@ -701,31 +701,31 @@ export function QueuePanel({ onClose }: QueuePanelProps) {
 
         {!collapsed && upcomingCount > 0 && (
           <>
-            <Tooltip content="Shuffle what's next">
+            <Tooltip content="Misturar próximas músicas">
               <button
                 type="button"
                 className={ICON_BUTTON}
                 onClick={() => playerController.shuffleUpcomingQueue()}
               >
                 <ShuffleIcon size={16} aria-hidden="true" />
-                <span className="sr-only">Shuffle what's next</span>
+                <span className="sr-only">Misturar próximas músicas</span>
               </button>
             </Tooltip>
-            <Tooltip content="Shuffle the whole playlist">
+            <Tooltip content="Misturar toda a playlist">
               <button
                 type="button"
                 className={ICON_BUTTON}
                 onClick={() => playerController.shuffleEntirePlaylist()}
               >
                 <ShuffleActiveIcon size={16} aria-hidden="true" />
-                <span className="sr-only">Shuffle the whole playlist</span>
+                <span className="sr-only">Misturar toda a playlist</span>
               </button>
             </Tooltip>
-            <Tooltip content="Save the queue as a playlist">
+            <Tooltip content="Salvar fila como playlist">
               <button
                 type="button"
                 className={cn(ICON_BUTTON, saveState === "saved" && "text-primary")}
-                onClick={() => setSaveDraft((draft) => (draft === null ? "My queue" : null))}
+                onClick={() => setSaveDraft((draft) => (draft === null ? "Minha fila" : null))}
                 aria-expanded={saveDraft !== null}
               >
                 {saveState === "saving" ? (
@@ -735,17 +735,17 @@ export function QueuePanel({ onClose }: QueuePanelProps) {
                 ) : (
                   <PlaylistAddIcon size={16} aria-hidden="true" />
                 )}
-                <span className="sr-only">Save the queue as a playlist</span>
+                <span className="sr-only">Salvar fila como playlist</span>
               </button>
             </Tooltip>
-            <Tooltip content="Clear the queue">
+            <Tooltip content="Limpar fila">
               <button
                 type="button"
                 className={cn(ICON_BUTTON, "hover:text-primary")}
                 onClick={() => playerController.clearUpcomingQueue()}
               >
                 <TrashIcon size={16} aria-hidden="true" />
-                <span className="sr-only">Clear the queue</span>
+                <span className="sr-only">Limpar fila</span>
               </button>
             </Tooltip>
           </>
@@ -763,12 +763,12 @@ export function QueuePanel({ onClose }: QueuePanelProps) {
               if (event.key === "Enter") void handleSaveQueue();
               if (event.key === "Escape") setSaveDraft(null);
             }}
-            aria-label="New playlist name"
+            aria-label="Nome da nova playlist"
             className="w-full min-w-0 rounded-lg bg-background px-2.5 py-1.5 text-sm text-foreground outline-none focus:ring-1 focus:ring-inset focus:ring-border"
           />
           <div className="flex items-center justify-between gap-2">
             <span className="text-[11px] text-muted-foreground">
-              {upcomingCount + (currentTrack ? 1 : 0)} songs
+              {upcomingCount + (currentTrack ? 1 : 0)} músicas
             </span>
             <div className="flex gap-1.5">
               <button
@@ -776,7 +776,7 @@ export function QueuePanel({ onClose }: QueuePanelProps) {
                 className="rounded-full px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => setSaveDraft(null)}
               >
-                Cancel
+                Cancelar
               </button>
               <button
                 type="button"
@@ -784,7 +784,7 @@ export function QueuePanel({ onClose }: QueuePanelProps) {
                 className="rounded-full bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                 onClick={() => void handleSaveQueue()}
               >
-                {saveState === "saving" ? "Saving..." : "Save"}
+                {saveState === "saving" ? "Salvando..." : "Salvar"}
               </button>
             </div>
           </div>
@@ -834,7 +834,7 @@ export function QueuePanel({ onClose }: QueuePanelProps) {
           {!collapsed && (
             <span className="flex min-w-0 flex-col">
               <span className="text-[10px] font-semibold uppercase tracking-wider text-primary">
-                {isPlaying ? "Now playing" : "Paused"}
+                {isPlaying ? "Tocando agora" : "Pausado"}
               </span>
               <span className="truncate text-sm font-medium text-foreground">
                 {currentTrack.title}
@@ -852,20 +852,20 @@ export function QueuePanel({ onClose }: QueuePanelProps) {
       {upcomingCount === 0 ? (
         collapsed ? null : (
           <p className="px-3 py-8 text-center text-sm text-muted-foreground">
-            Nothing queued. Songs you add with "Play next" land here.
+            Fila vazia. Músicas adicionadas com "Tocar a seguir" aparecerão aqui.
           </p>
         )
       ) : (
         <div className={cn("flex flex-col gap-0.5 pb-2", collapsed ? "px-1.5" : "px-2")}>
           {manual.length > 0 && (
             <>
-              {sectionLabel("Added by you", manual.length)}
+              {sectionLabel("Adicionadas por você", manual.length)}
               {renderRows(manual)}
             </>
           )}
           {automatic.length > 0 && (
             <>
-              {manual.length > 0 && sectionLabel("Up next", automatic.length)}
+              {manual.length > 0 && sectionLabel("A seguir", automatic.length)}
               {renderRows(automatic.slice(0, visibleAutomaticCount))}
               {automatic.length > visibleAutomaticCount && (
                 <ShowMoreQueueButton
@@ -888,7 +888,7 @@ export function QueuePanel({ onClose }: QueuePanelProps) {
           className="mx-2 mb-2 mt-auto shrink-0 rounded py-1.5 text-xs text-muted-foreground transition-colors hover:bg-card hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           onClick={onClose}
         >
-          Hide queue
+          Ocultar fila
         </button>
       )}
     </aside>

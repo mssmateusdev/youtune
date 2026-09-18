@@ -58,7 +58,7 @@ function NotificationRow({
       {!notification.read && (
         <span
           className="mt-1.5 size-2 shrink-0 rounded-full bg-primary"
-          aria-label="Unread"
+          aria-label="Não lida"
         />
       )}
     </button>
@@ -137,12 +137,12 @@ export function NotificationsPanel({ signedIn }: { signedIn: boolean }) {
       side="bottom"
       className="w-96 max-w-[calc(100vw-2rem)] p-2"
       trigger={
-        <Tooltip side="bottom" content="Notifications">
+        <Tooltip side="bottom" content="Notificações">
           <Button
             variant="ghost"
             size="icon"
             className="relative"
-            aria-label={unseen > 0 ? `Notifications, ${unseen} unread` : "Notifications"}
+            aria-label={unseen > 0 ? `Notificações, ${unseen} não lidas` : "Notificações"}
             aria-expanded={open}
             // FloatingPanel positions and dismisses the panel but leaves opening to the
             // trigger, so without this the button is inert.
@@ -166,11 +166,11 @@ export function NotificationsPanel({ signedIn }: { signedIn: boolean }) {
       }
     >
       <div className="flex items-center justify-between gap-2 px-2 pb-1.5 pt-1">
-        <span className="text-sm font-semibold text-foreground">Notifications</span>
+        <span className="text-sm font-semibold text-foreground">Notificações</span>
         <Button
           variant="ghost"
           size="icon"
-          aria-label="Refresh notifications"
+          aria-label="Atualizar notificações"
           disabled={isLoading}
           onClick={() => load()}
         >
@@ -179,12 +179,12 @@ export function NotificationsPanel({ signedIn }: { signedIn: boolean }) {
       </div>
 
       {isLoading && !notifications ? (
-        <div className="grid place-items-center py-10" role="status" aria-label="Loading">
+        <div className="grid place-items-center py-10" role="status" aria-label="Carregando">
           <SpinnerSteps size={24} color="currentColor" />
         </div>
       ) : !notifications?.length ? (
         <p className="px-3 py-8 text-center text-sm text-muted-foreground">
-          Nothing new. Subscribe to artists to hear about their releases here.
+          Nenhuma novidade. Inscreva-se em artistas para receber novidades sobre lançamentos aqui.
         </p>
       ) : (
         <div className="flex max-h-96 flex-col gap-0.5 overflow-y-auto">

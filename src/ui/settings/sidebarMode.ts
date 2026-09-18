@@ -24,9 +24,9 @@ export const SIDEBAR_COLLAPSED_WIDTH = 62;
 export const SIDEBAR_EXPANDED_WIDTH = 240;
 
 export const SIDEBAR_MODES: ReadonlyArray<{ value: SidebarMode; label: string; hint: string }> = [
-  { value: "expanded", label: "Always expanded", hint: "Names always visible" },
-  { value: "hover", label: "Expand on hover", hint: "Collapsed until you point at it" },
-  { value: "collapsed", label: "Always collapsed", hint: "Artwork only" },
+  { value: "expanded", label: "Sempre expandida", hint: "Nomes sempre visíveis" },
+  { value: "hover", label: "Expandir ao passar o cursor", hint: "Recolhida até passar o mouse" },
+  { value: "collapsed", label: "Sempre recolhida", hint: "Apenas capas" },
 ];
 
 function isSidebarMode(value: unknown): value is SidebarMode {

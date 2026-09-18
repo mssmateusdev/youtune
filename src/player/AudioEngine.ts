@@ -4,6 +4,7 @@ import {
   usesNativeAudioEngine,
   usesRustAudioEngine,
 } from "../ui/settings/audioEngine";
+import { isAdBlockEnabled } from "../ui/settings/adBlockAndSpeed";
 import type { RustAudioSource } from "../datasource/types";
 import * as rustAudio from "./rustAudio";
 
@@ -283,6 +284,7 @@ export class AudioEngine {
    * would set volumes on a deck that had already been torn down.
    */
   private fadeIntervalId: number | null = null;
+  private adSkipIntervalId: number | null = null;
   private muted = false;
   private playbackRate = 1;
   private onEnded: (() => void) | null = null;
@@ -556,6 +558,7 @@ export class AudioEngine {
       playbackClaimId += 1;
     }
     this.cancelFade();
+    this.cancelAdSkip();
     this.iframeFallbackActive = false;
     this.releaseRustAudio();
     this.releaseNativeAudio();
@@ -625,6 +628,7 @@ export class AudioEngine {
 
     this.cancelStandbyTeardown();
     this.destroyStandby();
+    this.cancelAdSkip();
 
     // Invalidates any cue or play still awaiting the deck being torn down, so a late resolve
     // cannot write state for a player that no longer exists.
@@ -964,6 +968,91 @@ export class AudioEngine {
     }
   }
 
+  private cancelAdSkip(): void {
+    if (this.adSkipIntervalId !== null) {
+      window.clearInterval(this.adSkipIntervalId);
+      this.adSkipIntervalId = null;
+    }
+  }
+
+  /**
+   * Fast-forwards and mutes advertisements in the YouTube IFrame player.
+   * Runs whenever playback state updates or when an ad is detected.
+   */
+  private checkAndSkipIframeAds(player: YouTubePlayer): void {
+    if (!isAdBlockEnabled()) return;
+    try {
+      const currentVideoId = this.currentVideoId;
+      const playerVideoData = player.getVideoData();
+      const playerVideoId = playerVideoData?.video_id;
+
+      // An ad is playing if the video id in the player is different from what was requested,
+      // or if the player exposes an ad state
+      const isAdPlaying = Boolean(
+        (playerVideoId && currentVideoId && playerVideoId !== currentVideoId)
+        || (player as any).getAdState?.() === 1
+        || (player as any).isAdPlaying?.()
+      );
+
+      if (isAdPlaying) {
+        logInternalInfo("AudioEngine detected YouTube advertisement, skipping/muting", {
+          currentVideoId,
+          playerVideoId,
+        });
+        // Mute ad audio so user doesn't hear commercial
+        player.mute();
+        // Speed through ad at 16x speed
+        player.setPlaybackRate?.(16);
+        // Attempt to seek to the end of the ad to trigger instant skip
+        const duration = player.getDuration();
+        if (duration && duration > 0) {
+          player.seekTo(duration, true);
+        }
+
+        // Start a fast monitor to restore normal volume and speed as soon as real song begins
+        if (!this.adSkipIntervalId) {
+          this.adSkipIntervalId = window.setInterval(() => {
+            try {
+              const activeId = this.player?.getVideoData()?.video_id;
+              const adStillPlaying = Boolean(
+                (activeId && this.currentVideoId && activeId !== this.currentVideoId)
+                || (this.player as any)?.getAdState?.() === 1
+                || (this.player as any)?.isAdPlaying?.()
+              );
+              if (!adStillPlaying) {
+                this.cancelAdSkip();
+                // Restore playback rate and volume for the actual music
+                this.player?.setPlaybackRate?.(this.playbackRate);
+                this.applyOutputVolume();
+                logInternalInfo("AudioEngine ad finished, restored music playback", {
+                  videoId: this.currentVideoId,
+                });
+              } else {
+                // Keep fast-forwarding/skipping
+                const dur = this.player?.getDuration();
+                if (dur && dur > 0) {
+                  this.player?.seekTo(dur, true);
+                }
+              }
+            } catch {
+              this.cancelAdSkip();
+            }
+          }, 150);
+        }
+      } else {
+        if (this.adSkipIntervalId !== null) {
+          this.cancelAdSkip();
+          this.player?.setPlaybackRate?.(this.playbackRate);
+          this.applyOutputVolume();
+        }
+      }
+    } catch (err) {
+      logInternalWarn("AudioEngine checkAndSkipIframeAds error", {
+        error: err instanceof Error ? err.message : String(err),
+      });
+    }
+  }
+
   /**
    * Decodes a track onto the active Rust deck.
    *
@@ -1298,6 +1387,8 @@ export class AudioEngine {
               deck: isActiveDeck ? "active" : "standby",
             });
             if (!isActiveDeck) return;
+
+            this.checkAndSkipIframeAds(player);
 
             this.resolveStateWaiters(event.data, player.getVideoData().video_id ?? null);
             if (event.data === window.YT!.PlayerState.ENDED) {

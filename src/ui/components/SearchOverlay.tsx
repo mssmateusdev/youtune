@@ -332,7 +332,7 @@ export function SearchOverlay({
         data-onboarding="search-panel"
         role="dialog"
         aria-modal="true"
-        aria-label="Search artists, songs, playlists, and albums"
+        aria-label="Buscar artistas, músicas, playlists e álbuns"
         onMouseDown={(event) => event.stopPropagation()}
       >
         <div className={cn("flex items-center gap-2.5 px-4 py-3 bg-muted/50 text-muted-foreground [&_input]:min-w-0 [&_input]:flex-1 [&_input]:bg-transparent [&_input]:text-base [&_input]:text-foreground [&_input]:outline-none", selectedIndex === 0 && "bg-muted/70 text-foreground")}>
@@ -346,10 +346,10 @@ export function SearchOverlay({
               setSelectedIndex(0);
             }}
             onKeyDown={handleKeyDown}
-            placeholder="Search artists, songs, playlists, and albums"
-            aria-label="Search artists, songs, playlists, and albums"
+            placeholder="Buscar artistas, músicas, playlists e álbuns"
+            aria-label="Buscar artistas, músicas, playlists e álbuns"
           />
-          {isLoading && <span className="px-4   text-center text-sm text-muted-foreground">Searching</span>}
+          {isLoading && <span className="px-4   text-center text-sm text-muted-foreground">Buscando...</span>}
         </div>
 
         {preview && (
@@ -382,14 +382,14 @@ export function SearchOverlay({
                 {preview.type === "playlist"
                   ? `Playlist - ${preview.value.owner}`
                   : preview.type === "album"
-                    ? `Album - ${preview.value.artist}`
+                    ? `Álbum - ${preview.value.artist}`
                     : preview.type === "artist"
-                      ? preview.value.subscriberCount || "Artist"
+                      ? preview.value.subscriberCount || "Artista"
                     : preview.value.artist}
               </span>
             </span>
             <span className="flex items-center gap-1 [&_kbd]:rounded [&_kbd]:bg-card [&_kbd]:px-1.5 [&_kbd]:py-0.5 [&_kbd]:font-sans">
-              {preview.type === "track" ? "Play" : "Open"}
+              {preview.type === "track" ? "Tocar" : "Abrir"}
             </span>
           </button>
         )}
@@ -469,7 +469,7 @@ export function SearchOverlay({
                 e.stopPropagation();
                 removeRecentSearch(recentSearch);
               }}
-              aria-label={`Remove ${recentSearch}`}
+              aria-label={`Remover ${recentSearch}`}
               className={cn(
                 "mr-2 flex size-8 items-center justify-center rounded-lg transition-all",
                 "opacity-0 group-hover:opacity-100 group-focus-within:opacity-100",
@@ -486,9 +486,9 @@ export function SearchOverlay({
 )}
 
         <footer className="flex items-center gap-3 px-4 py-2 text-xs text-muted-foreground">
-          <span>Enter search</span>
-          <span>Shift or {primaryModifierLabel} + Enter new tab</span>
-          <span>Esc close</span>
+          <span>Enter buscar</span>
+          <span>Shift ou {primaryModifierLabel} + Enter nova aba</span>
+          <span>Esc fechar</span>
         </footer>
       </section>
     </div>

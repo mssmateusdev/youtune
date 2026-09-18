@@ -1,11 +1,9 @@
 import { useRef, useState, useSyncExternalStore } from "react";
 import { getCurrentWindow } from "@tauri-apps/api/window";
 import { invoke } from "@tauri-apps/api/core";
-import { openUrl } from "@tauri-apps/plugin-opener";
 import { cn } from "@/lib/utils";
 import { Tooltip } from "@/components/motion/tooltip";
-import { DiscordIcon, GitHubIcon, LastFmIcon, LoginIcon, SettingsIcon, YouTubeMusicIcon } from "@/ui/icons";
-import { GITHUB_REPOSITORY_URL } from "../links";
+import { DiscordIcon, LastFmIcon, LoginIcon, SettingsIcon, YouTubeMusicIcon } from "@/ui/icons";
 import { DiscordRpcService } from "../../player/DiscordRPC";
 import { useDiscordPresenceEnabled } from "../settings/discord";
 import { setLastFmScrobblingEnabled, useLastFmScrobblingEnabled } from "../settings/lastfm";
@@ -111,7 +109,6 @@ export function TitleBar({
   const discordVisible = useToolbarItemVisible("discord");
   const lastFmVisible = useToolbarItemVisible("lastfm");
   const ytMusicVisible = useToolbarItemVisible("ytmusic");
-  const githubVisible = useToolbarItemVisible("github");
   const homePointerRef = useRef<{
     pointerId: number;
     startX: number;
@@ -219,7 +216,17 @@ export function TitleBar({
           src={appIcon}
           alt=""
         /> 
-        {!hideHomeText && <h3 >zuno_</h3>}
+         {!hideHomeText && (
+           <>
+             <h3>YouTune</h3>
+             <span
+               className="ml-1 inline-flex items-center rounded-md bg-white/8 px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-muted-foreground"
+               aria-hidden="true"
+             >
+               by Folky
+             </span>
+           </>
+         )}
       </button>
 
       <MusicTabs
@@ -236,7 +243,7 @@ export function TitleBar({
 
       <div
         className="min-w-6 flex-1"
-        aria-label="Drag window"
+        aria-label="Arrastar janela"
         onPointerDown={(event) => {
           if (event.button !== 0) return;
           void startWindowDrag();
@@ -250,7 +257,7 @@ export function TitleBar({
         groups. They render regardless of the native-controls setting, since on Linux/native
         chrome the window buttons disappear but these still belong here.
       */}
-      <div className="flex shrink-0 items-center gap-1 pl-2 pr-1" aria-label="App actions">
+      <div className="flex shrink-0 items-center gap-1 pl-2 pr-1" aria-label="Ações do aplicativo">
         {/*
           Integration toggles.
 
@@ -266,7 +273,7 @@ export function TitleBar({
         {discordVisible && (
         <Tooltip
           side="bottom"
-          content={discordEnabled ? "Discord presence on" : "Discord presence off"}
+          content={discordEnabled ? "Presença no Discord ativada" : "Presença no Discord desativada"}
         >
           <Button
             variant="ghost"
@@ -274,7 +281,7 @@ export function TitleBar({
             onClick={() => void DiscordRpcService.setEnabled(!discordEnabled)}
             aria-pressed={discordEnabled}
             aria-label={
-              discordEnabled ? "Turn off Discord presence" : "Turn on Discord presence"
+              discordEnabled ? "Desativar presença no Discord" : "Ativar presença no Discord"
             }
           >
             <DiscordIcon
@@ -291,7 +298,7 @@ export function TitleBar({
         {lastFmVisible && (
         <Tooltip
           side="bottom"
-          content={lastFmEnabled ? "Last.fm scrobbling on" : "Last.fm scrobbling off"}
+          content={lastFmEnabled ? "Scrobbling Last.fm ativado" : "Scrobbling Last.fm desativado"}
         >
           <Button
             variant="ghost"
@@ -299,7 +306,7 @@ export function TitleBar({
             onClick={() => setLastFmScrobblingEnabled(!lastFmEnabled)}
             aria-pressed={lastFmEnabled}
             aria-label={
-              lastFmEnabled ? "Turn off Last.fm scrobbling" : "Turn on Last.fm scrobbling"
+              lastFmEnabled ? "Desativar scrobbling Last.fm" : "Ativar scrobbling Last.fm"
             }
           >
             <LastFmIcon
@@ -318,8 +325,8 @@ export function TitleBar({
           side="bottom"
           content={
             ytScrobblingEnabled
-              ? "Adding plays to YouTube Music history"
-              : "Not adding plays to YouTube Music history"
+              ? "Adicionando reproduções ao histórico do YouTube Music"
+              : "Não adicionando reproduções ao histórico do YouTube Music"
           }
         >
           <Button
@@ -329,8 +336,8 @@ export function TitleBar({
             aria-pressed={ytScrobblingEnabled}
             aria-label={
               ytScrobblingEnabled
-                ? "Stop adding plays to YouTube Music history"
-                : "Add plays to YouTube Music history"
+                ? "Pausar histórico do YouTube Music"
+                : "Registrar no histórico do YouTube Music"
             }
           >
             <YouTubeMusicIcon
@@ -345,25 +352,13 @@ export function TitleBar({
         </Tooltip>
         )}
 
-        {githubVisible && (
-        <Tooltip side="bottom" content="Source on GitHub">
-          <Button
-            variant='ghost'
-          size='icon'
-            onClick={() => void openUrl(GITHUB_REPOSITORY_URL)}
-            aria-label="Open the project on GitHub"
-          >
-            <GitHubIcon size={16} aria-hidden="true"  />
-          </Button>
-        </Tooltip>
-        )}
-        <Tooltip side="bottom" content="Settings">
+        <Tooltip side="bottom" content="Configurações">
         <Button
             variant='ghost'
           size='icon'
             
             onClick={onOpenSettings}
-            aria-label="Open settings"
+            aria-label="Abrir configurações"
           >
             <SettingsIcon size={17} aria-hidden="true" />
           </Button>
@@ -379,13 +374,13 @@ export function TitleBar({
           side="bottom"
           className="w-64"
           trigger={
-            <Tooltip side="bottom" content={isSignedIn ? account?.name || "Account" : "Sign in"}>
+            <Tooltip side="bottom" content={isSignedIn ? account?.name || "Conta" : "Fazer login"}>
               <button
                 type="button"
                 onClick={() => setIsAccountPanelOpen((open) => !open)}
                 aria-haspopup="menu"
                 aria-expanded={isAccountPanelOpen}
-                aria-label={isSignedIn ? `Account: ${account?.name || "YouTube Music"}` : "Sign in"}
+                aria-label={isSignedIn ? `Conta: ${account?.name || "YouTube Music"}` : "Fazer login"}
                 className={cn(
                   "ml-0.5 grid size-7 place-items-center rounded-full transition-shadow",
                   "focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring",
@@ -411,7 +406,7 @@ export function TitleBar({
                   <span className="truncate text-sm font-medium text-foreground">
                     {account?.name || "YouTube Music"}
                   </span>
-                  <span className="truncate text-xs text-muted-foreground">Signed in</span>
+                  <span className="truncate text-xs text-muted-foreground">Conectado</span>
                 </span>
               </div>
 
@@ -424,13 +419,13 @@ export function TitleBar({
               <GoogleAccountSwitcher
                 libraryController={libraryController}
                 onSwitched={() => setIsAccountPanelOpen(false)}
-                label="Account"
+                label="Conta"
               />
 
               <AccountSwitcher
                 libraryController={libraryController}
                 onSwitched={() => setIsAccountPanelOpen(false)}
-                label="Channel"
+                label="Canal"
               />
 
               <button
@@ -442,7 +437,7 @@ export function TitleBar({
                 }}
               >
                 <SettingsIcon size={16} aria-hidden="true" />
-                Account settings
+                Configurações da conta
               </button>
             </div>
           ) : (
@@ -457,12 +452,12 @@ export function TitleBar({
                 <LoginIcon size={20} aria-hidden="true" />
               </span>
               <p className="mt-1 text-sm font-semibold text-foreground">
-                {isConnecting ? "Connecting…" : "Not signed in"}
+                {isConnecting ? "Conectando…" : "Não conectado"}
               </p>
               <p className="text-xs leading-relaxed text-muted-foreground">
                 {isConnecting
-                  ? "Restoring your YouTube Music session."
-                  : "Connect YouTube Music for your library, playlists and likes."}
+                  ? "Restaurando sua sessão do YouTube Music."
+                  : "Conecte sua conta do YouTube Music para acessar sua biblioteca, playlists e curtidas."}
               </p>
               <GoogleSignInButton
                 className="mt-2"
@@ -488,11 +483,11 @@ export function TitleBar({
             "flex shrink-0 items-center",
             windowsStyleWindowControls ? "gap-0" : "gap-1.5 px-3",
           )}
-          aria-label="Window controls"
+          aria-label="Controles da janela"
         >
           <button
             type="button"
-            aria-label="Minimize"
+            aria-label="Minimizar"
             className={cn(
               WINDOW_BUTTON_BASE,
               windowsStyleWindowControls
@@ -505,7 +500,7 @@ export function TitleBar({
           </button>
           <button
             type="button"
-            aria-label="Maximize"
+            aria-label="Maximizar"
             className={cn(
               WINDOW_BUTTON_BASE,
               windowsStyleWindowControls
@@ -518,7 +513,7 @@ export function TitleBar({
           </button>
           <button
             type="button"
-            aria-label="Close"
+            aria-label="Fechar"
             className={cn(
               WINDOW_BUTTON_BASE,
               windowsStyleWindowControls

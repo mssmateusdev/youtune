@@ -10,6 +10,7 @@ import { computeQueueWindow } from "./queueWindow";
 import { getOfflineTrack, isTrackDownloaded } from "./offlineStore";
 import { hasPreloadDeck } from "./preloadDeck";
 import { getAudioEngineMode } from "../ui/settings/audioEngine";
+import { isAdBlockEnabled } from "../ui/settings/adBlockAndSpeed";
 import { DiscordRpcService } from "./DiscordRPC";
 import {
   MAX_CROSSFADE_SEC,
@@ -1365,6 +1366,38 @@ export class PlayerController {
           );
         }
       } catch (error) {
+        if (isAdBlockEnabled() && useNativeAudio && !isDownloaded) {
+          logInternalWarn("PlayerController.ensureTrackLoaded retrying direct stream to prevent ad fallback", {
+            trackId: track.id,
+          });
+          try {
+            const retryAudioData = await this.dataSource.getStreamData?.(track);
+            if (retryAudioData) {
+              await this.audioEngine.loadTrack(
+                track.id,
+                retryAudioData.bytes,
+                retryAudioData.mimeType,
+                retryAudioData.sourceUrl,
+                retryAudioData.rustSource,
+                track.durationSec,
+              );
+              this.loadedTrackId = track.id;
+              if (this.pendingSeekTime !== null) {
+                this.audioEngine.seekTo(this.pendingSeekTime);
+                this.pendingSeekTime = null;
+              }
+              this.warmNextTrack();
+              this.beginPlayReport(track);
+              return;
+            }
+          } catch (retryError) {
+            logInternalWarn("PlayerController.ensureTrackLoaded direct retry failed", {
+              trackId: track.id,
+              error: getErrorMessage(retryError),
+            });
+          }
+        }
+
         if (canFallBackToIframe) {
           logInternalWarn("PlayerController.ensureTrackLoaded falling back to the YouTube player", {
             trackId: track.id,

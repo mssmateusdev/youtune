@@ -66,10 +66,10 @@ export function PlaybackControls({ extraControlsAlwaysVisible = true }: Playback
 
   const orderLabel =
     state.playbackOrderMode === "repeat-one"
-      ? "Loop current song"
+      ? "Repetir música atual"
       : state.playbackOrderMode === "repeat-all"
-        ? "Loop the queue"
-        : "Play in order";
+        ? "Repetir fila"
+        : "Tocar em ordem";
 
   // In-order is the resting state, so it reads as Linear; the other two are Bold.
   const isOrderActive = state.playbackOrderMode !== "in-order";
@@ -94,8 +94,8 @@ export function PlaybackControls({ extraControlsAlwaysVisible = true }: Playback
           className={cn(CONTROL_BUTTON, isShuffled && "text-primary hover:text-primary")}
           onClick={handleShuffleToggle}
           aria-pressed={isShuffled}
-          aria-label={isShuffled ? "Turn off shuffle" : "Shuffle"}
-          title={isShuffled ? "Shuffle is on" : "Shuffle"}
+          aria-label={isShuffled ? "Desativar ordem aleatória" : "Ordem aleatória"}
+          title={isShuffled ? "Ordem aleatória ativada" : "Ordem aleatória"}
         >
           {isShuffled ? <ShuffleActiveIcon size={20} /> : <ShuffleIcon size={20} />}
         </button>
@@ -106,7 +106,7 @@ export function PlaybackControls({ extraControlsAlwaysVisible = true }: Playback
         className={CONTROL_BUTTON}
         onClick={handleSkipPrevious}
         disabled={!hasCurrentTrack}
-        aria-label="Previous track"
+        aria-label="Faixa anterior"
       >
         <SkipPreviousIcon size={20} />
       </button>
@@ -116,7 +116,7 @@ export function PlaybackControls({ extraControlsAlwaysVisible = true }: Playback
         className="flex size-11 items-center justify-center rounded-full bg-primary text-primary-foreground transition-[transform,background-color] hover:bg-primary/80 active:scale-95 disabled:pointer-events-none disabled:opacity-40 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
         onClick={handlePlayPause}
         disabled={isBusy || !hasCurrentTrack}
-        aria-label={isBusy ? "Loading song" : isPlaying ? "Pause" : "Play"}
+        aria-label={isBusy ? "Carregando música" : isPlaying ? "Pausar" : "Reproduzir"}
       >
         <span className="relative grid size-5 place-items-center" aria-hidden="true">
           <AnimatePresence initial={false} mode="popLayout">
@@ -142,7 +142,7 @@ export function PlaybackControls({ extraControlsAlwaysVisible = true }: Playback
         className={CONTROL_BUTTON}
         onClick={handleSkipNext}
         disabled={!hasCurrentTrack}
-        aria-label="Next track"
+        aria-label="Próxima faixa"
       >
         <SkipNextIcon size={20} />
       </button>

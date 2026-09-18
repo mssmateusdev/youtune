@@ -278,7 +278,7 @@ export function HomePage({
     >
         
       <div className="flex items-center justify-between gap-3">
-        <h3>Made for you</h3>
+        <h3>Feito para você</h3>
       </div>
       {/*
         The picks ride the inside of a cylinder instead of sitting in a grid: the row recedes
@@ -341,7 +341,7 @@ export function HomePage({
           ]
         )}
       </CylinderCarousel>
-      {isLoadingSuggestions && <span className="sr-only" role="status">Loading suggestions</span>}
+      {isLoadingSuggestions && <span className="sr-only" role="status">Carregando sugestões</span>}
 
     </section>
   );
@@ -351,11 +351,11 @@ export function HomePage({
       {libraryState.status === "signed-out" && (
         <section className="flex items-center justify-between gap-4 rounded-xl bg-card/60 px-4 py-3 text-sm text-muted-foreground">
           <div>
-            <h1>You&apos;re not signed in</h1>
-            <p>Sign in to access your history, playlists, and albums.</p>
+            <h1>Você não está conectado</h1>
+            <p>Faça login para acessar seu histórico, playlists e álbuns.</p>
           </div>
           <button type="button" onClick={() => void onSignIn()}>
-            Sign in
+            Fazer login
           </button>
         </section>
       )}
@@ -368,11 +368,11 @@ export function HomePage({
 
       {compactRecent.length === 0 && isWaitingForLibrary && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-xl font-semibold text-foreground">Recently played</h2>
+          <h2 className="text-xl font-semibold text-foreground">Ouvidos recentemente</h2>
           <div
             className="grid gap-1.5 [grid-template-columns:repeat(auto-fill,minmax(16rem,1fr))]"
             role="status"
-            aria-label="Loading recently played"
+            aria-label="Carregando ouvidos recentemente"
           >
             {Array.from({ length: RECENT_COMPACT_COUNT }, (_, index) => (
               <TrackRowSkeleton key={index} delayMs={index * 60} />
@@ -383,7 +383,7 @@ export function HomePage({
 
       {compactRecent.length > 0 && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-xl font-semibold text-foreground">Recently played</h2>
+          <h2 className="text-xl font-semibold text-foreground">Ouvidos recentemente</h2>
           <div className="grid gap-1.5 [grid-template-columns:repeat(auto-fill,minmax(16rem,1fr))]">
             {compactRecent.map((track) => (
               <button
@@ -412,14 +412,14 @@ export function HomePage({
 
       {moreSuggestions.length === 0 && isLoadingSuggestions && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-xl font-semibold text-foreground">More recommendations</h2>
-          <AlbumGridSkeleton count={MORE_SUGGESTIONS_COUNT} label="Loading more recommendations" />
+          <h2 className="text-xl font-semibold text-foreground">Mais recomendações</h2>
+          <AlbumGridSkeleton count={MORE_SUGGESTIONS_COUNT} label="Carregando mais recomendações" />
         </section>
       )}
 
       {moreSuggestions.length > 0 && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-xl font-semibold text-foreground">More recommendations</h2>
+          <h2 className="text-xl font-semibold text-foreground">Mais recomendações</h2>
           <div className="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(9.5rem,1fr))]">
             {moreSuggestions.map((track) => (
               <AlbumCard
@@ -437,14 +437,14 @@ export function HomePage({
 
       {largeRecent.length === 0 && isWaitingForLibrary && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-xl font-semibold text-foreground">Listen again</h2>
-          <AlbumGridSkeleton count={RECENT_LARGE_COUNT} label="Loading listen again" />
+          <h2 className="text-xl font-semibold text-foreground">Ouvir novamente</h2>
+          <AlbumGridSkeleton count={RECENT_LARGE_COUNT} label="Carregando ouvir novamente" />
         </section>
       )}
 
       {largeRecent.length > 0 && (
         <section className="flex flex-col gap-3">
-          <h2 className="text-xl font-semibold text-foreground">Listen again</h2>
+          <h2 className="text-xl font-semibold text-foreground">Ouvir novamente</h2>
           <div className="grid gap-3 [grid-template-columns:repeat(auto-fill,minmax(9.5rem,1fr))]">
             {largeRecent.map((track) => (
               <AlbumCard
@@ -462,10 +462,10 @@ export function HomePage({
 
       {!isLoadingSuggestions && suggestions.length === 0 && (
         <div className="px-2 py-10 text-center text-sm text-muted-foreground">
-          <p>Recommendations could not be loaded.</p>
+          <p>Não foi possível carregar as recomendações.</p>
           {libraryState.status === "signed-out" && (
             <button onClick={() => void onSignIn()}>
-              Sign in with YouTube Music
+              Fazer login com o YouTube Music
             </button>
           )}
         </div>

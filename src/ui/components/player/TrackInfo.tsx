@@ -2,10 +2,10 @@ import { useLayoutEffect, useRef, useState } from "react";
 import { SpinnerSteps } from "@/components/motion/loader";
 import { Marquee } from "@/components/motion/marquee";
 import { cn } from "@/lib/utils";
-import { HeartActiveIcon, HeartBrokenIcon, HeartIcon } from "@/ui/icons";
+import { FullScreenIcon, HeartActiveIcon, HeartBrokenIcon, HeartIcon } from "@/ui/icons";
 import { shallowEqual, usePlayerSelector } from "../../../player/playerStore";
 import { useLibraryState } from "../../../player/playerStore";
-import { usePlayerUIState } from "../../stores/playerUIStore";
+import { playerUIStore, usePlayerUIState } from "../../stores/playerUIStore";
 import { TrackArtwork } from "../TrackArtwork";
 import { ArtistLinks } from "../ArtistLinks";
 import { useTrackContextMenu } from "../TrackContextMenu";
@@ -57,12 +57,26 @@ export function TrackInfo() {
       onContextMenu={(event) => openTrackMenu(event, currentTrack)}
     >
       {uiState.showAlbumArt && (
-        <TrackArtwork
-          className="size-12 shrink-0  object-cover"
-          size={48}
-          artworkUrl={currentTrack.artworkUrl}
-          iconSize={22}
-        />
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation();
+            playerUIStore.setFullscreenPlayer(true);
+          }}
+          className="group/art relative size-[60px] shrink-0 cursor-pointer overflow-hidden rounded-lg shadow-sm transition-transform active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          title="Abrir em tela cheia (F)"
+          aria-label="Abrir modo tela cheia"
+        >
+          <TrackArtwork
+            className="size-full object-cover transition-all duration-300 group-hover/art:scale-105 group-hover/art:brightness-90"
+            size={60}
+            artworkUrl={currentTrack.artworkUrl}
+            iconSize={26}
+          />
+          <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 transition-opacity duration-200 group-hover/art:opacity-100">
+            <FullScreenIcon size={20} className="text-white drop-shadow-md" />
+          </div>
+        </button>
       )}
       <div className="flex min-w-0 flex-col gap-0.5">
         <div ref={titleViewportRef} className="relative min-w-0 overflow-hidden">

@@ -10,9 +10,9 @@
 export type LibrarySort = "custom" | "recent" | "name";
 
 export const LIBRARY_SORTS: ReadonlyArray<{ value: LibrarySort; label: string; hint: string }> = [
-  { value: "custom", label: "Custom", hint: "Your order — drag to rearrange" },
-  { value: "recent", label: "Recent", hint: "Most recently played first" },
-  { value: "name", label: "Name", hint: "Alphabetical" },
+  { value: "custom", label: "Personalizada", hint: "Sua ordem — arraste para reorganizar" },
+  { value: "recent", label: "Recentes", hint: "Mais ouvidos recentemente primeiro" },
+  { value: "name", label: "Nome", hint: "Ordem alfabética" },
 ];
 
 /** The shape both playlists and albums satisfy, so one path serves the whole sidebar. */
@@ -109,7 +109,7 @@ export function canReorderLibrary(sort: LibrarySort, query: string): boolean {
 
 /** Why dragging is unavailable, for the tooltip. Null when it is available. */
 export function reorderBlockedReason(sort: LibrarySort, query: string): string | null {
-  if (query.trim()) return "Clear the filter to rearrange";
-  if (sort !== "custom") return "Switch to Custom order to rearrange";
+  if (query.trim()) return "Limpe a busca para reorganizar";
+  if (sort !== "custom") return "Mude para a ordem Personalizada para reorganizar";
   return null;
 }

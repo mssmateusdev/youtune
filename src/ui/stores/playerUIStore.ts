@@ -6,6 +6,7 @@ export interface PlayerUIState {
   showAlbumArt: boolean;
   isLyricsOpen: boolean;
   isLyricsFullscreen: boolean;
+  isFullscreenPlayer: boolean;
   isQueueOpen: boolean;
 }
 
@@ -18,6 +19,7 @@ class PlayerUIStore {
     showAlbumArt: true,
     isLyricsOpen: false,
     isLyricsFullscreen: false,
+    isFullscreenPlayer: false,
     isQueueOpen: false,
   };
   private listeners = new Set<Listener>();
@@ -66,6 +68,14 @@ class PlayerUIStore {
 
   setLyricsFullscreen(isLyricsFullscreen: boolean) {
     this.setState({ isLyricsFullscreen });
+  }
+
+  setFullscreenPlayer(isFullscreenPlayer: boolean) {
+    this.setState({ isFullscreenPlayer });
+  }
+
+  toggleFullscreenPlayer() {
+    this.setState({ isFullscreenPlayer: !this.state.isFullscreenPlayer });
   }
 
   setQueueOpen(isQueueOpen: boolean) {

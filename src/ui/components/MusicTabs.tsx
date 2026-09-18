@@ -10,9 +10,9 @@ import { Button } from "@/components/motion/button";
 const MAX_TAB_TITLE_LENGTH = 32;
 
 function getTabTitle(tab: Tab): string {
-  if (tab.view === "settings") return "Settings";
+  if (tab.view === "settings") return "Configurações";
   if (tab.view === "search" && tab.searchQuery) return tab.searchQuery;
-  if (!tab.title) return "New Tab";
+  if (!tab.title) return "Nova aba";
   if (tab.title.length <= MAX_TAB_TITLE_LENGTH) return tab.title;
   return `${tab.title.slice(0, MAX_TAB_TITLE_LENGTH - 3)}...`;
 }
@@ -210,7 +210,7 @@ export function MusicTabs({
                       exit={{ opacity: 0, scale: 0.6, width: 0 }}
                       className="flex shrink-0 items-center text-primary"
                     >
-                      <VolumeLoudActiveIcon size={15} aria-label="Currently playing" />
+                      <VolumeLoudActiveIcon size={15} aria-label="Reproduzindo no momento" />
                     </motion.span>
                   )}
                 </AnimatePresence>
@@ -227,7 +227,7 @@ export function MusicTabs({
                     e.stopPropagation();
                     onCloseTab(tab.id);
                   }}
-                  aria-label={`Close ${title}`}
+                  aria-label={`Fechar ${title}`}
                 >
                   <CloseIcon size={16} />
                 </button>
@@ -241,7 +241,7 @@ export function MusicTabs({
           size='icon'
           className="flex size-7 shrink-0 items-center justify-center rounded-none  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           onClick={onCreateTab}
-          aria-label="Add new tab"
+          aria-label="Adicionar nova aba"
           data-onboarding="new-tab"
         >
           <AddSquareIcon size={18} />

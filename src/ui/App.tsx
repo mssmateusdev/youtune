@@ -44,6 +44,7 @@ import { ArtistNavigationProvider } from "./components/ArtistLinks";
 import { cn } from "@/lib/utils";
 import { TitleBar } from "./components/TitleBar";
 import { PlayerBar } from "./components/player/PlayerBar";
+import { FullscreenPlayer } from "./components/player/FullscreenPlayer";
 import { QueuePanel } from "./components/player/QueuePanel";
 import { useQueuePanelCollapsed } from "./settings/queuePanel";
 import { useNativeWindowControls } from "./settings/windowControls";
@@ -1696,6 +1697,19 @@ export default function App() {
       ) {
         event.preventDefault();
         void playerController.skipToNext();
+        return;
+      }
+
+      if (
+        (event.key === "f" || event.key === "F" || event.key === "F11")
+        && !event.ctrlKey
+        && !event.metaKey
+        && !event.altKey
+        && playerState.currentTrack
+        && !playerUIState.isFullscreenPlayer
+      ) {
+        event.preventDefault();
+        playerUIStore.setFullscreenPlayer(true);
       }
     };
 
@@ -1995,9 +2009,8 @@ useEffect(() => {
       className="pointer-events-none absolute inset-x-0 top-0 z-50 h-px bg-linear-to-r from-transparent via-[var(--window-edge-highlight)] to-transparent"
       aria-hidden="true"
     /> */}
-      {/* Dropped entirely in full-screen lyrics, not just visually hidden: the window is
-          real OS fullscreen at that point, so there is no frame left to drag or minimize. */}
-      {!playerUIState.isLyricsFullscreen && (
+      {/* Dropped entirely in full-screen lyrics or fullscreen player, not just visually hidden */}
+      {!playerUIState.isLyricsFullscreen && !playerUIState.isFullscreenPlayer && (
       <TitleBar
         tabs={tabs}
         activeTabId={activeTabId}
@@ -2033,8 +2046,8 @@ useEffect(() => {
           canGoForward={canNavigateForward}
           onNavigateBack={handleNavigateBack}
           onNavigateForward={handleNavigateForward}
-          fullBleedContent={playerUIState.isLyricsOpen}
-          hideSidebar={playerUIState.isLyricsFullscreen}
+          fullBleedContent={playerUIState.isLyricsOpen || playerUIState.isFullscreenPlayer}
+          hideSidebar={playerUIState.isLyricsFullscreen || playerUIState.isFullscreenPlayer}
           showTransientScrollbar={
             !playerUIState.isLyricsOpen
             && (activeTab?.view === "playlist" || activeTab?.view === "album")
@@ -2193,6 +2206,7 @@ useEffect(() => {
         className={cn(
           "group/immersive-playerbar",
           playerUIState.isLyricsFullscreen && "absolute inset-x-0 bottom-0 z-40",
+          playerUIState.isFullscreenPlayer && "hidden pointer-events-none",
         )}
       >
         {playerUIState.isLyricsFullscreen && (
@@ -2286,6 +2300,12 @@ useEffect(() => {
             progress={libraryState.authProgress}
             onCancel={() => void libraryController.cancelSignIn()}
           />
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {playerUIState.isFullscreenPlayer && (
+          <FullscreenPlayer />
         )}
       </AnimatePresence>
     </div>

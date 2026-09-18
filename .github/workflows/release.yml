@@ -88,10 +88,10 @@ jobs:
 
           if test -s "$notes"; then
             gh release create "$tag" --repo "$GITHUB_REPOSITORY" \
-              --title "Zuno ${tag#v}" --notes-file "$notes"
+              --title "YouTune ${tag#v}" --notes-file "$notes"
           else
             gh release create "$tag" --repo "$GITHUB_REPOSITORY" \
-              --title "Zuno ${tag#v}" --generate-notes
+              --title "YouTune ${tag#v}" --generate-notes
           fi
           echo "proceed=true" >> "$GITHUB_OUTPUT"
 

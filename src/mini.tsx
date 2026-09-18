@@ -12,6 +12,8 @@ import {
   hydrateRenderEffects,
   useReduceMotion,
 } from "./ui/settings/renderEffects";
+import { applyAccentColor, hydrateAccentColor } from "./ui/settings/accentColor";
+import { hydrateAdBlockAndSpeed } from "./ui/settings/adBlockAndSpeed";
 
 applyPlatformAttributes();
 /*
@@ -21,9 +23,16 @@ applyPlatformAttributes();
  * agree without talking to each other; a window already open when the setting changes picks
  * it up on its next launch, which is when it is next visible anyway.
  */
+applyAccentColor();
 applyPaperPcMode();
 applyRenderEffects();
-void Promise.all([hydrateMiniPlayerSettings(), hydratePaperPcMode(), hydrateRenderEffects()]);
+void Promise.all([
+  hydrateMiniPlayerSettings(),
+  hydratePaperPcMode(),
+  hydrateRenderEffects(),
+  hydrateAccentColor(),
+  hydrateAdBlockAndSpeed(),
+]);
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>

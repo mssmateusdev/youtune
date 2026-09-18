@@ -94,7 +94,7 @@ function MiniEqBar({
         ref={trackRef}
         role="slider"
         tabIndex={disabled ? -1 : 0}
-        aria-label={`${label} gain`}
+        aria-label={`Ganho de ${label}`}
         aria-orientation="vertical"
         aria-valuemin={-EQUALIZER_MAX_DB}
         aria-valuemax={EQUALIZER_MAX_DB}
@@ -154,11 +154,11 @@ export function MiniEqualizer() {
     <div className={cn("flex flex-col gap-2.5 border-t border-border pt-3", !available && "opacity-50")}>
       <div className="flex items-center justify-between gap-2">
         <span id={labelId} className="text-xs font-medium text-foreground">
-          Equaliser
+          Equalizador
         </span>
         <div className="flex items-center gap-2">
           <span className="text-[11px] text-muted-foreground">
-            {available ? (enabled ? (flat ? "Flat" : "On") : "Off") : "Rust engine only"}
+            {available ? (enabled ? (flat ? "Plano" : "Ligado") : "Desligado") : "Apenas motor Rust"}
           </span>
           <Switch
             checked={enabled}

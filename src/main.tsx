@@ -6,6 +6,8 @@ import "./ui/styles/global.css";
 import { logInternalError, logInternalInfo } from "./internal/logging";
 import { applyPaperPcMode, hydratePaperPcMode } from "./ui/settings/paperPcMode";
 import { applyTheme, hydrateTheme, watchSystemTheme } from "./ui/settings/theme";
+import { applyAccentColor, hydrateAccentColor } from "./ui/settings/accentColor";
+import { hydrateAdBlockAndSpeed } from "./ui/settings/adBlockAndSpeed";
 import {
   applyNativeWindowControls,
   hydrateWindowControlSettings,
@@ -51,6 +53,7 @@ void detectTilingWindowManager();
 // Before React mounts: a late theme apply shows a flash of the wrong palette.
 applyTheme();
 watchSystemTheme();
+applyAccentColor();
 applyPaperPcMode();
 applyRenderEffects();
 // One line a minute in the app log, so "the renderer is using 220 MB" can be split into heap,
@@ -64,6 +67,8 @@ void Promise.all([
   hydratePaperPcMode(),
   hydrateRenderEffects(),
   hydrateTheme(),
+  hydrateAccentColor(),
+  hydrateAdBlockAndSpeed(),
   hydrateWindowControlSettings(),
   hydrateMediaSessionSettings(),
   hydrateMiniPlayerSettings(),
@@ -122,7 +127,7 @@ window.addEventListener("unhandledrejection", (event) => {
  */
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
-    <ErrorBoundary label="Zuno">
+    <ErrorBoundary label="YouTune">
       <App />
     </ErrorBoundary>
   </React.StrictMode>,

@@ -124,7 +124,7 @@ export function AccountSwitcher({
     return (
       <div className={cn("flex items-center gap-2 px-1  text-sm text-muted-foreground", className)}>
         <Loader variant="spinner" size={16} />
-        Loading channels...
+        Carregando canais...
       </div>
     );
   }
@@ -132,7 +132,7 @@ export function AccountSwitcher({
   if (accounts.length === 0) {
     return showSingle ? (
       <p className={cn("px-2 py-2 text-sm text-muted-foreground", className)}>
-        No channels were returned for this account.
+        Nenhum canal foi retornado para esta conta.
       </p>
     ) : null;
   }
@@ -266,7 +266,7 @@ export function GoogleAccountSwitcher({
     return (
       <div className={cn("flex items-center gap-2 px-1 text-sm text-muted-foreground", className)}>
         <Loader variant="spinner" size={16} />
-        Loading accounts...
+        Carregando contas...
       </div>
     );
   }
@@ -312,7 +312,7 @@ export function GoogleAccountSwitcher({
                       event.preventDefault();
                       void handleRemove(account, event as unknown as React.MouseEvent);
                     }}
-                    aria-label={`Remove ${account.name}`}
+                    aria-label={`Remover ${account.name}`}
                     className="flex shrink-0 items-center justify-center rounded-md p-1 opacity-0 transition-opacity hover:bg-background hover:text-destructive group-hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   >
                     <CloseIcon size={14} aria-hidden="true" />
@@ -353,7 +353,7 @@ export function AddGoogleAccountButton({
       <span className="grid size-8 shrink-0 place-items-center rounded-full bg-card text-muted-foreground">
         <UserPlusIcon size={16} aria-hidden="true" />
       </span>
-      Add account
+      Adicionar conta
     </button>
   );
 }

@@ -21,12 +21,12 @@ function formatDayLabel(timestamp: number): string {
   startOfToday.setHours(0, 0, 0, 0);
   const startOfDay = startOfToday.getTime();
 
-  if (timestamp >= startOfDay) return "Today";
-  if (timestamp >= startOfDay - DAY_MS) return "Yesterday";
+  if (timestamp >= startOfDay) return "Hoje";
+  if (timestamp >= startOfDay - DAY_MS) return "Ontem";
 
   const date = new Date(timestamp);
   const sameYear = date.getFullYear() === startOfToday.getFullYear();
-  return date.toLocaleDateString(undefined, {
+  return date.toLocaleDateString("pt-BR", {
     weekday: "long",
     day: "numeric",
     month: "long",
@@ -86,9 +86,9 @@ export function HistoryPage({
         <span className="grid size-12 place-items-center rounded-full bg-card text-muted-foreground">
           <ClockIcon size={24} aria-hidden="true" />
         </span>
-        <p className="text-sm font-medium text-foreground">No listening history yet</p>
+        <p className="text-sm font-medium text-foreground">Nenhum histórico de reprodução ainda</p>
         <p className="max-w-xs text-sm text-muted-foreground">
-          Songs you play appear here with the time you played them.
+          As músicas que você ouve aparecem aqui com o horário em que foram reproduzidas.
         </p>
       </div>
     );
@@ -98,10 +98,10 @@ export function HistoryPage({
     <div className="flex flex-col gap-6">
       <header className="flex items-end justify-between gap-4">
         <div className="flex flex-col gap-0.5">
-          <h1 className="text-3xl font-bold tracking-[-0.02em] text-foreground">History</h1>
+          <h1 className="text-3xl font-bold tracking-[-0.02em] text-foreground">Histórico</h1>
           <p className="text-sm text-muted-foreground">
-            {entries.length} {entries.length === 1 ? "play" : "plays"} across {days.length}{" "}
-            {days.length === 1 ? "day" : "days"}
+            {entries.length} {entries.length === 1 ? "reprodução" : "reproduções"} em {days.length}{" "}
+            {days.length === 1 ? "dia" : "dias"}
           </p>
         </div>
 
@@ -126,7 +126,7 @@ export function HistoryPage({
           )}
         >
           <TrashIcon size={16} aria-hidden="true" />
-          {confirmClear ? "Click again to clear" : "Clear history"}
+          {confirmClear ? "Clique novamente para limpar" : "Limpar histórico"}
         </button>
       </header>
 
@@ -168,7 +168,7 @@ export function HistoryPage({
                     <span
                       role="button"
                       tabIndex={0}
-                      aria-label={`Remove ${entry.track.title} from history`}
+                      aria-label={`Remover ${entry.track.title} do histórico`}
                       className="grid size-7 place-items-center rounded-full text-muted-foreground opacity-0 transition hover:bg-background hover:text-foreground group-hover/row:opacity-100 focus:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                       onClick={(event) => {
                         event.stopPropagation();

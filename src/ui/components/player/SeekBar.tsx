@@ -264,7 +264,7 @@ export function SeekBar() {
         style={{
           "--slider-progress": `${duration > 0 ? (currentTime / duration) * 100 : 0}%`,
         } as React.CSSProperties}
-        aria-label="Seek"
+        aria-label="Buscar posição"
       />
       <span className="w-10 shrink-0 text-xs tabular-nums text-muted-foreground">
         {formatTime(duration)}

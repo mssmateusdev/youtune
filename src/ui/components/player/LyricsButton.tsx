@@ -26,7 +26,7 @@ export function LyricsButton({ onToggle }: LyricsButtonProps) {
       )}
       onClick={onToggle}
       disabled={!hasTrack}
-      aria-label={uiState.isLyricsOpen ? "Close lyrics" : "Open lyrics"}
+      aria-label={uiState.isLyricsOpen ? "Fechar letras" : "Abrir letras"}
       aria-pressed={uiState.isLyricsOpen}
     >
       <Glyph size={19} />

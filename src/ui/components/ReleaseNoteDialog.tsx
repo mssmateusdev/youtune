@@ -64,10 +64,10 @@ export function ReleaseNoteDialog({ version, onDismiss }: ReleaseNoteDialogProps
             transition={{ type: "spring", stiffness: 420, damping: 32, mass: 0.7 }}
           >
             <span className="text-[11px] font-medium uppercase tracking-[0.16em] text-primary">
-              Updated
+              Atualizado
             </span>
             <h2 id="release-note-title" className="mt-1 text-xl font-bold tracking-tight">
-              Zuno {version}
+              YouTune {version}
             </h2>
 
             {/* `whitespace-pre-line` so the note stays plain text: it is edited per release,
@@ -101,12 +101,12 @@ export function ReleaseNoteDialog({ version, onDismiss }: ReleaseNoteDialogProps
             <div className="mt-5 flex flex-wrap items-center gap-2">
               <ExternalLinkButton
                 icon={<ListIcon size={15} aria-hidden="true" />}
-                label="Release notes"
+                label="Notas da versão"
                 url={GITHUB_RELEASES_URL}
               />
               <ExternalLinkButton
                 icon={<GitHubIcon size={15} aria-hidden="true" />}
-                label="Report an issue"
+                label="Relatar um problema"
                 url={GITHUB_NEW_ISSUE_URL}
               />
 
@@ -120,7 +120,7 @@ export function ReleaseNoteDialog({ version, onDismiss }: ReleaseNoteDialogProps
                 )}
                 onClick={onDismiss}
               >
-                Got it
+                Entendido
               </button>
             </div>
           </motion.div>

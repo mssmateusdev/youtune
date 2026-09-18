@@ -5,8 +5,7 @@ use std::sync::{Arc, Mutex};
 use std::time::{SystemTime, UNIX_EPOCH};
 
 const DISCORD_CLIENT_ID: &str = "1515682467154100344";
-const GITHUB_REPO: &str = "https://github.com/noFAYZ/zuno";
-const ACTIVITY_NAME: &str = "Zuno";
+const ACTIVITY_NAME: &str = "YouTune";
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct DiscordPresenceData {
@@ -75,10 +74,16 @@ impl DiscordRpcManager {
         let duration = data.duration;
 
         // Keep owned values alive while building the activity
-        let state_str = if data.is_playing {
+        let state_str = if data.artist.trim().is_empty() {
+            if data.is_playing {
+                "YouTune".to_string()
+            } else {
+                "YouTune (pausado)".to_string()
+            }
+        } else if data.is_playing {
             data.artist.clone()
         } else {
-            format!("{} (paused)", data.artist)
+            format!("{} (pausado)", data.artist)
         };
 
         let artwork_image = data.artwork_url.clone();
@@ -94,18 +99,19 @@ impl DiscordRpcManager {
         let end_ts = start_ts + duration as i64;
 
         /*
-         * The artist, not the app, is the headline.
-         *
-         * `name` is what Discord prints after "Listening to", so sending the app name made
-         * every song read "Listening to Zuno" — the same line for everything, saying nothing
-         * about what is actually playing. The artist goes there and the app name is only the
-         * fallback for a track with no artist, so the line is never empty.
+         * A música, e não o autor, deve ser o destaque principal ("Listening to {title}").
+         * O nome do app serve como fallback caso o título esteja vazio.
          */
-        let activity_name = if data.artist.trim().is_empty() {
+        let activity_name = if data.title.trim().is_empty() {
             ACTIVITY_NAME.to_string()
         } else {
-            data.artist.clone()
+            data.title.clone()
         };
+
+        let button_url = data
+            .song_url
+            .as_deref()
+            .unwrap_or("https://music.youtube.com");
 
         let mut activity = json!({
             "name": activity_name,
@@ -118,8 +124,8 @@ impl DiscordRpcManager {
             },
             "buttons": [
                 {
-                    "label": "Get Zuno",
-                    "url": GITHUB_REPO,
+                    "label": "Ouvir no YouTune",
+                    "url": button_url,
                 }
             ],
         });

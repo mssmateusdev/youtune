@@ -28,9 +28,9 @@ import { useNowPlaying } from "../hooks/useNowPlaying";
 export type BrowseTab = BrowseSurface | "downloads";
 
 const SURFACES: Array<{ value: BrowseTab; label: string }> = [
-  { value: "explore", label: "Explore" },
-  { value: "charts", label: "Charts" },
-  { value: "moods", label: "Moods & genres" },
+  { value: "explore", label: "Explorar" },
+  { value: "charts", label: "Paradas" },
+  { value: "moods", label: "Estilos e gêneros" },
   { value: "podcasts", label: "Podcasts" },
   { value: "downloads", label: "Downloads" },
 ];
@@ -116,7 +116,7 @@ export function BrowsePage({
       })
       .catch((cause: unknown) => {
         logInternalError("BrowsePage.load failed", cause, { surface });
-        if (!cancelled) setError("Could not load this feed.");
+        if (!cancelled) setError("Não foi possível carregar este feed.");
       });
 
     return () => {
@@ -136,17 +136,17 @@ export function BrowsePage({
             <button
               type="button"
               onClick={() => setDrillDown((stack) => stack.slice(0, -1))}
-              aria-label="Back"
+              aria-label="Voltar"
               className="grid size-8 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-card hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             >
               <ArrowLeftIcon size={18} aria-hidden="true" />
             </button>
           )}
           <h1 className="text-3xl font-bold tracking-[-0.02em] text-foreground">
-            {drillDown[drillDown.length - 1]?.title ?? (isDownloads ? "Downloads" : "Browse")}
+            {drillDown[drillDown.length - 1]?.title ?? (isDownloads ? "Downloads" : "Explorar")}
           </h1>
         </div>
-        <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Browse feed">
+        <div className="flex flex-wrap gap-1.5" role="tablist" aria-label="Feed de exploração">
           {SURFACES.map((item) => (
             <button
               key={item.value}
@@ -177,23 +177,22 @@ export function BrowsePage({
             <span className="grid size-12 place-items-center rounded-full bg-card text-muted-foreground">
               <DownloadIcon size={24} aria-hidden="true" />
             </span>
-            <p className="text-sm font-medium text-foreground">Nothing downloaded yet</p>
+            <p className="text-sm font-medium text-foreground">Nenhum download ainda</p>
             <p className="max-w-sm text-sm text-muted-foreground">
-              Use the download button on any song to keep it on this machine. Downloaded songs
-              play without a connection.
+              Use o botão de download em qualquer música para salvá-la neste computador e ouvi-la sem internet.
             </p>
           </div>
         ) : (
           <section className="flex flex-col gap-3">
             <div className="flex items-end justify-between gap-4">
               <p className="text-sm text-muted-foreground">
-                {downloads.length} {downloads.length === 1 ? "song" : "songs"} ·{" "}
+                {downloads.length} {downloads.length === 1 ? "música" : "músicas"} ·{" "}
                 {formatSize(offline.usedBytes)}
-                {inFlight.length > 0 ? ` · ${inFlight.length} in progress` : ""}
+                {inFlight.length > 0 ? ` · ${inFlight.length} em andamento` : ""}
                 {offline.downloadingId
                   ? offline.progress !== null
-                    ? ` · downloading ${offline.progress}%`
-                    : " · downloading"
+                    ? ` · baixando ${offline.progress}%`
+                    : " · baixando"
                   : ""}
 
               </p>
@@ -216,7 +215,7 @@ export function BrowsePage({
                     : "bg-card text-muted-foreground hover:text-foreground",
                 )}
               >
-                {confirmRemoveAll ? "Click again to remove all" : "Remove all"}
+                {confirmRemoveAll ? "Clique novamente para remover tudo" : "Remover tudo"}
               </button>
             </div>
 
@@ -242,8 +241,8 @@ export function BrowsePage({
                           {isActive
                             ? offline.progress !== null
                               ? `${offline.progress}%`
-                              : "Downloading"
-                            : "Queued"}
+                              : "Baixando"
+                            : "Na fila"}
                         </span>
                       }
                     />
@@ -284,11 +283,11 @@ export function BrowsePage({
       ) : page === null ? (
         <div className="flex items-center justify-center gap-2 py-16 text-sm text-muted-foreground">
           <SpinnerSteps size={18} color="currentColor" />
-          Loading {SURFACES.find((item) => item.value === surface)?.label}...
+          Carregando {SURFACES.find((item) => item.value === surface)?.label}...
         </div>
       ) : page.shelves.length === 0 ? (
         <p className="px-2 py-10 text-center text-sm text-muted-foreground">
-          YouTube Music returned nothing for this feed.
+          O YouTube Music não retornou nada para este feed.
         </p>
       ) : (
         <BrowseShelves

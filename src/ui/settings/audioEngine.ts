@@ -44,18 +44,18 @@ export const AUDIO_ENGINE_MODES: ReadonlyArray<{
 }> = [
   {
     value: "rust",
-    label: "Rust audio",
-    hint: "Decoded in the app. Lowest memory, gapless and crossfade, falls back if a track is refused.",
+    label: "Áudio Rust (Recomendado)",
+    hint: "Decodificado no app. Menor uso de memória, suporte a gapless e crossfade.",
   },
   {
     value: "iframe",
-    label: "YouTube player",
-    hint: "Google's own player for everything. Runs a hidden youtube.com frame, ~90 MB.",
+    label: "Player do YouTube",
+    hint: "Player oficial do Google. Executa um frame oculto do youtube.com (~90 MB).",
   },
   {
     value: "native",
-    label: "Native audio",
-    hint: "Plays through the webview. Keeps a second copy of each track in memory, no gapless.",
+    label: "Áudio nativo",
+    hint: "Reproduz pelo webview. Mantém uma cópia de cada faixa na memória, sem gapless.",
   },
 ];
 

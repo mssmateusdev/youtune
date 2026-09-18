@@ -257,7 +257,7 @@ function CreatePlaylistButton({
       setOpen(false);
       onCreated(created);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not import that playlist.");
+      setError(cause instanceof Error ? cause.message : "Não foi possível importar essa playlist.");
     } finally {
       setBusy(false);
     }
@@ -266,7 +266,7 @@ function CreatePlaylistButton({
   const submit = async () => {
     const trimmed = name.trim();
     if (!trimmed) {
-      setError("Give the playlist a name.");
+      setError("Dê um nome para a playlist.");
       inputRef.current?.focus();
       return;
     }
@@ -282,7 +282,7 @@ function CreatePlaylistButton({
       setOpen(false);
       onCreated(created);
     } catch (cause) {
-      setError(cause instanceof Error ? cause.message : "Could not create the playlist.");
+      setError(cause instanceof Error ? cause.message : "Não foi possível criar a playlist.");
     } finally {
       setBusy(false);
     }
@@ -300,7 +300,7 @@ function CreatePlaylistButton({
       trigger={
         <Button
           type="button"
-          aria-label="New playlist"
+          aria-label="Nova playlist"
           size="icon"
           variant="ghost"
           aria-expanded={open}
@@ -326,12 +326,12 @@ function CreatePlaylistButton({
           )}
         >
           <AddCircleIcon size={18} aria-hidden="true" />
-          {!collapsed && <span>New playlist</span>}
+          {!collapsed && <span>Nova playlist</span>}
         </Button>
       }
     >
       <div className="flex flex-col gap-2">
-        <span className="text-sm font-medium text-foreground">New playlist</span>
+        <span className="text-sm font-medium text-foreground">Nova playlist</span>
 
         {/* Segmented control rather than a checkbox: these are two destinations, not a
             modifier, and the description below changes with the choice so the consequence is
@@ -340,7 +340,7 @@ function CreatePlaylistButton({
           <div
             className="mt-0.5 flex rounded-lg bg-card p-0.5"
             role="radiogroup"
-            aria-label="Where to create the playlist"
+            aria-label="Onde criar a playlist"
           >
             {(["youtube", "local"] as const).map((value) => (
               <button
@@ -357,7 +357,7 @@ function CreatePlaylistButton({
                     : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                {value === "youtube" ? "YouTube Music" : "This computer"}
+                {value === "youtube" ? "YouTube Music" : "Este computador"}
               </button>
             ))}
           </div>
@@ -365,15 +365,15 @@ function CreatePlaylistButton({
 
         <span className="text-xs text-muted-foreground">
           {destination === "youtube"
-            ? "Saved to your account, so it syncs everywhere."
-            : "Built from folders on this computer."}
+            ? "Salva na sua conta, sincroniza em qualquer lugar."
+            : "Criada a partir de pastas neste computador."}
         </span>
         <input
           ref={inputRef}
           className="mt-1 w-full min-w-0 rounded-lg bg-background px-2.5 py-1.5 text-sm text-foreground outline-none placeholder:text-muted-foreground focus:ring-1 focus:ring-inset focus:ring-border"
           value={name}
-          placeholder="Playlist name"
-          aria-label="Playlist name"
+          placeholder="Nome da playlist"
+          aria-label="Nome da playlist"
           onChange={(event) => {
             setName(event.target.value);
             if (error) setError(null);
@@ -390,7 +390,7 @@ function CreatePlaylistButton({
           disabled={busy}
           onClick={() => void submit()}
         >
-          {busy ? "Creating..." : "Create playlist"}
+          {busy ? "Criando..." : "Criar playlist"}
         </button>
 
         <button
@@ -399,7 +399,7 @@ function CreatePlaylistButton({
           className="rounded-full px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground disabled:pointer-events-none disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           onClick={() => void importFromFile()}
         >
-          Import from file...
+          Importar de arquivo...
         </button>
       </div>
     </FloatingPanel>
@@ -413,8 +413,8 @@ const LIBRARY_VIEWS: Array<{
   hint: string;
   icon: typeof PlaylistIcon;
 }> = [
-  { value: "playlists", label: "Playlists", hint: "Your playlists", icon: PlaylistIcon },
-  { value: "albums", label: "Albums", hint: "Saved albums", icon: AlbumIcon },
+  { value: "playlists", label: "Playlists", hint: "Suas playlists", icon: PlaylistIcon },
+  { value: "albums", label: "Álbuns", hint: "Álbuns salvos", icon: AlbumIcon },
 ];
 
 const ARTWORK_TILE = "size-10 shrink-0 rounded object-cover";
@@ -1128,7 +1128,7 @@ export function Sidebar({
             shouldHideText ? "mx-auto flex-col" : "mx-2",
           )}
           role="group"
-          aria-label="Library view"
+          aria-label="Visualização da biblioteca"
         >
           {LIBRARY_VIEWS.map((view) => {
             const isActive = libraryView === view.value;
@@ -1205,8 +1205,8 @@ export function Sidebar({
                   event.stopPropagation();
                   setLibraryFilter("");
                 }}
-                placeholder={libraryView === "albums" ? "Filter albums" : "Filter playlists"}
-                aria-label={libraryView === "albums" ? "Filter albums" : "Filter playlists"}
+                placeholder={libraryView === "albums" ? "Filtrar álbuns" : "Filtrar playlists"}
+                aria-label={libraryView === "albums" ? "Filtrar álbuns" : "Filtrar playlists"}
                 type="text"
               />
               {libraryFilter && (
@@ -1217,7 +1217,7 @@ export function Sidebar({
                     setLibraryFilter("");
                     filterInputRef.current?.focus();
                   }}
-                  aria-label="Clear filter"
+                  aria-label="Limpar filtro"
                 >
                   <CloseIcon size={14} aria-hidden="true" />
                 </button>
@@ -1239,14 +1239,14 @@ export function Sidebar({
                   side="bottom"
                   content={
                     reorderBlocked
-                      ? `Sort: ${activeSortLabel} — ${reorderBlocked}`
-                      : `Sort: ${activeSortLabel}`
+                      ? `Ordem: ${activeSortLabel} — ${reorderBlocked}`
+                      : `Ordem: ${activeSortLabel}`
                   }
                 >
                   <button
                     type="button"
                     className="grid size-7 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:bg-card hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
-                    aria-label={`Sort order: ${activeSortLabel}`}
+                    aria-label={`Ordem de exibição: ${activeSortLabel}`}
                     aria-haspopup="menu"
                   >
                     <SortIcon size={15} aria-hidden="true" />
@@ -1254,7 +1254,7 @@ export function Sidebar({
                 </Tooltip>
               }
             >
-              <div role="menu" aria-label="Sort order">
+              <div role="menu" aria-label="Ordem de exibição">
                 {LIBRARY_SORTS.map((option) => (
                   <button
                     key={option.value}
@@ -1365,19 +1365,19 @@ export function Sidebar({
                   <div className={EMPTY_STATE}>
                     <PlaylistIcon size={28} aria-hidden="true" />
                     {!shouldHideText && (
-                      <span>No user-created playlists were found.</span>
+                      <span>Nenhuma playlist encontrada.</span>
                     )}
                     <button
                       type="button"
                       className={RETRY_BUTTON}
                       onClick={handlePlaylistRetry}
                       disabled={isRetryingPlaylists}
-                      title="Retry playlist sync"
-                      aria-label="Retry playlist sync"
+                      title="Tentar sincronizar playlists novamente"
+                      aria-label="Tentar sincronizar playlists novamente"
                     >
                       <RefreshIcon size={15} aria-hidden="true" />
                       {!shouldHideText && (
-                        <span>{isRetryingPlaylists ? "Retrying..." : "Retry"}</span>
+                        <span>{isRetryingPlaylists ? "Tentando..." : "Tentar novamente"}</span>
                       )}
                     </button>
                   </div>
@@ -1392,7 +1392,7 @@ export function Sidebar({
                 <SearchIcon size={26} aria-hidden="true" />
                 {!shouldHideText && (
                   <span>
-                    Nothing matches “{libraryFilter.trim()}”.
+                    Nenhum resultado para “{libraryFilter.trim()}”.
                   </span>
                 )}
                 <button
@@ -1404,7 +1404,7 @@ export function Sidebar({
                   }}
                 >
                   <CloseIcon size={15} aria-hidden="true" />
-                  {!shouldHideText && <span>Clear filter</span>}
+                  {!shouldHideText && <span>Limpar filtro</span>}
                 </button>
               </div>
             ) : (
@@ -1413,8 +1413,8 @@ export function Sidebar({
                 {!shouldHideText && (
                   <span>
                     {libraryState.status === "signed-out"
-                      ? "Sign in to see your playlists."
-                      : "No user-created playlists were found."}
+                      ? "Faça login para ver suas playlists."
+                      : "Nenhuma playlist encontrada."}
                   </span>
                 )}
                 {libraryState.status === "signed-out" && (
@@ -1430,12 +1430,12 @@ export function Sidebar({
                     className={RETRY_BUTTON}
                     onClick={handlePlaylistRetry}
                     disabled={isRetryingPlaylists}
-                    title="Retry playlist sync"
-                    aria-label="Retry playlist sync"
+                    title="Tentar sincronizar playlists novamente"
+                    aria-label="Tentar sincronizar playlists novamente"
                   >
                     <RefreshIcon size={15} aria-hidden="true" />
                     {!shouldHideText && (
-                      <span>{isRetryingPlaylists ? "Retrying..." : "Retry"}</span>
+                      <span>{isRetryingPlaylists ? "Tentando..." : "Tentar novamente"}</span>
                     )}
                   </button>
                 )}

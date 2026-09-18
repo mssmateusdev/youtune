@@ -21,7 +21,7 @@ export function SelectionBar({
   onAddToPlaylist,
   onDownload,
   onRemove,
-  removeLabel = "Remove",
+  removeLabel = "Remover",
 }: {
   selection: TrackSelection;
   onAddToQueue: (tracks: Track[]) => void;
@@ -59,10 +59,10 @@ export function SelectionBar({
             "rounded-full bg-popover/95 px-2 py-1.5 shadow-2xl ring-1 ring-border backdrop-blur",
           )}
           role="toolbar"
-          aria-label="Selected songs"
+          aria-label="Músicas selecionadas"
         >
           <span className="px-2 text-xs font-semibold tabular-nums text-foreground">
-            {selection.selectedCount} selected
+            {selection.selectedCount} selecionada{selection.selectedCount > 1 ? "s" : ""}
           </span>
 
           <button
@@ -72,7 +72,7 @@ export function SelectionBar({
             onClick={() => void run(onAddToQueue)}
           >
             <ListIcon size={15} aria-hidden="true" />
-            Queue
+            Fila
           </button>
 
           <button
@@ -92,7 +92,7 @@ export function SelectionBar({
             onClick={() => void run(onDownload)}
           >
             <DownloadIcon size={15} aria-hidden="true" />
-            Download
+            Baixar
           </button>
 
           {onRemove && (
@@ -114,13 +114,13 @@ export function SelectionBar({
             className={cn(ACTION, "text-muted-foreground hover:text-foreground")}
             onClick={selection.selectAll}
           >
-            All
+            Todas
           </button>
           <button
             type="button"
             className="grid size-7 shrink-0 place-items-center rounded-full text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             onClick={selection.clear}
-            aria-label="Clear selection"
+            aria-label="Limpar seleção"
           >
             <CloseIcon size={16} />
           </button>

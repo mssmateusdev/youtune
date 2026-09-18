@@ -1,7 +1,5 @@
 import { motion } from "motion/react";
 import { cn } from "@/lib/utils";
-/* import appIcon from "../../../assets/img/Logo.png";
- */import introVideo from "../../../assets/img/zuno.mp4";
 
 /*
  * The accent bloom, as a gradient rather than a blurred circle.
@@ -20,14 +18,14 @@ const LOADING_GLOW =
   "radial-gradient(circle, color-mix(in oklab, var(--color-primary) 7%, transparent) 0%, transparent 70%)";
 
 const LOADING_LINES = [
-  " Finding your rhythm...",
-  " Loading your library...",
-  " Tuning the soundstage...",
-  " Warming up the strings...",
-  " Counting in...",
-  " Preparing your session...",
-  " Syncing your music...",
-  " Building today's vibe...",
+  "Encontrando seu ritmo...",
+  "Carregando sua biblioteca...",
+  "Afinando o palco...",
+  "Aquecendo as cordas...",
+  "Contando os tempos...",
+  "Preparando sua sessão...",
+  "Sincronizando sua música...",
+  "Montando a vibe de hoje...",
 ];
 
 interface AppLoadingScreenProps {
@@ -44,7 +42,7 @@ export function AppLoadingScreen({ isLeaving }: AppLoadingScreenProps) {
         isLeaving ? "pointer-events-none opacity-0" : "opacity-100",
       )}
       role="status"
-      aria-label="Loading"
+      aria-label="Carregando"
       aria-live="polite"
     >
       
@@ -55,38 +53,66 @@ export function AppLoadingScreen({ isLeaving }: AppLoadingScreenProps) {
       />
 
       <div className="relative flex flex-col items-center gap-5">
-{/*         <motion.img
-          initial={{ opacity: 0, scale: 0.92 }}
+        {/* Animated logo — CSS play button with pulsing ring */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.85 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ type: "spring", stiffness: 260, damping: 24 }}
-          className="size-20 rounded-2xl"
-          src={appIcon}
-          alt=""
-        />  */}
+          className="relative flex size-20 items-center justify-center"
+        >
+          {/* Rotating ring */}
+          <div
+            className="absolute inset-0 rounded-full"
+            style={{
+              border: "2px solid transparent",
+              borderTopColor: "var(--color-primary)",
+              borderRightColor: "color-mix(in oklab, var(--color-primary) 30%, transparent)",
+              animation: "splash-spin 1.2s linear infinite",
+            }}
+          />
+          {/* Pulsing glow */}
+          <div
+            className="absolute inset-1 rounded-full"
+            style={{
+              background: "radial-gradient(circle, color-mix(in oklab, var(--color-primary) 12%, transparent) 0%, transparent 70%)",
+              animation: "splash-pulse 2s ease-in-out infinite",
+            }}
+          />
+          {/* Play triangle */}
+          <svg
+            viewBox="0 0 24 24"
+            fill="currentColor"
+            className="relative ml-1 size-8 text-primary"
+          >
+            <path d="M8 5.14v14l11-7-11-7z" />
+          </svg>
+        </motion.div>
 
-<motion.video
-  initial={{ opacity: 0, scale: 0.92 }}
-  animate={{ opacity: 1, scale: 1 }}
-  transition={{ type: "spring", stiffness: 260, damping: 24 }}
-  /* No `backdrop-blur`: this is an opaque, object-cover video — the filter was blurring a
-     backdrop that the video itself completely covers, once per video frame, during startup. */
-  className="size-18 drop-shadow-2xl rounded-full object-cover
-             [mask-image:radial-gradient(circle_at_center,black_58%,transparent_100%)]
-             [-webkit-mask-image:radial-gradient(circle_at_center,black_58%,transparent_100%)]"
-  autoPlay
-  muted
-  loop
-  playsInline
-  preload="auto"
->
-  <source src={introVideo} type="video/mp4" />
-</motion.video>
- 
-      <div className="flex items-end gap-4">
-       {/*  <AudioLoader /> */}  <strong className="text-sm font-medium text-foreground">{loadingLine}</strong>
+        <motion.div
+          initial={{ opacity: 0, y: 6 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2, duration: 0.4 }}
+          className="flex flex-col items-center gap-2"
+        >
+          <strong className="text-sm font-semibold tracking-wide text-primary">
+            YouTune
+          </strong>
+          <span className="text-xs font-medium text-muted-foreground">
+            {loadingLine}
+          </span>
+        </motion.div>
       </div>
-        
-      </div>
+
+      {/* Keyframes for the CSS animations */}
+      <style>{`
+        @keyframes splash-spin {
+          to { transform: rotate(360deg); }
+        }
+        @keyframes splash-pulse {
+          0%, 100% { opacity: 0.4; transform: scale(1); }
+          50% { opacity: 1; transform: scale(1.08); }
+        }
+      `}</style>
     </div>
   );
 }

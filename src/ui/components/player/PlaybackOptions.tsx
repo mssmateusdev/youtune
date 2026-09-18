@@ -71,13 +71,13 @@ export function PlaybackOptions() {
       triggerClassName="shrink-0"
       className="w-64"
       trigger={
-        <Tooltip content="Speed, sleep timer and equaliser">
+        <Tooltip content="Velocidade, temporizador e equalizador">
           <button
             type="button"
             onClick={() => setIsOpen((open) => !open)}
             aria-haspopup="dialog"
             aria-expanded={isOpen}
-            aria-label="Playback options"
+            aria-label="Opções de reprodução"
             className={cn(
               "flex h-8 items-center justify-center gap-1 rounded-full px-2 text-muted-foreground transition-colors",
               "hover:bg-card hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
@@ -100,8 +100,8 @@ export function PlaybackOptions() {
     >
       <div className="flex flex-col gap-3">
         <div className="flex flex-col gap-1.5">
-          <span className="text-xs font-medium text-foreground">Playback speed</span>
-          <div className="flex rounded-lg bg-card p-0.5" role="radiogroup" aria-label="Playback speed">
+          <span className="text-xs font-medium text-foreground">Velocidade de reprodução</span>
+          <div className="flex rounded-lg bg-card p-0.5" role="radiogroup" aria-label="Velocidade de reprodução">
             {SPEEDS.map((value) => (
               <button
                 key={value}
@@ -125,10 +125,10 @@ export function PlaybackOptions() {
 
         <div className="flex flex-col gap-1.5 border-t border-border pt-3">
           <div className="flex items-baseline justify-between gap-2">
-            <span className="text-xs font-medium text-foreground">Sleep timer</span>
+            <span className="text-xs font-medium text-foreground">Temporizador de suspensão</span>
             {isSleeping && (
               <span className="text-xs tabular-nums text-primary">
-                {formatCountdown(remainingMs)} left
+                restam {formatCountdown(remainingMs)}
               </span>
             )}
           </div>
@@ -149,12 +149,12 @@ export function PlaybackOptions() {
                 onClick={() => applySleep(null)}
                 className="rounded-full px-2.5 py-1 text-[11px] font-medium text-primary transition-colors hover:bg-primary/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
-                Cancel
+                Cancelar
               </button>
             )}
           </div>
           <span className="text-[11px] text-muted-foreground">
-            Fades out over the last 20 seconds.
+            Esmaece suavemente nos últimos 20 segundos.
           </span>
         </div>
 

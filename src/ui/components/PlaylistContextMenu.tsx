@@ -196,12 +196,12 @@ export function PlaylistContextMenuProvider({
       || Boolean(album.playlistId && libraryController.isAlbumSaved(album.playlistId));
     setPosition(null);
     setIsSaving(true);
-    showPersistentToast(saved ? "Removing..." : "Saving...");
+    showPersistentToast(saved ? "Removendo..." : "Salvando...");
     try {
       await libraryController.setAlbumSaved(album, !saved);
-      showToast(saved ? "Removed from library" : "Saved to library");
+      showToast(saved ? "Removido da biblioteca" : "Salvo na biblioteca");
     } catch (error) {
-      showToast(error instanceof Error ? error.message : "Unable to update this album.");
+      showToast(error instanceof Error ? error.message : "Não foi possível atualizar este álbum.");
     } finally {
       setIsSaving(false);
     }
@@ -212,9 +212,9 @@ export function PlaylistContextMenuProvider({
     setPosition(null);
     try {
       await navigator.clipboard.writeText(getAlbumUrl(album));
-      showToast("Url copied to clipboard");
+      showToast("URL copiada para a área de transferência");
     } catch {
-      showToast("Unable to copy the link.");
+      showToast("Não foi possível copiar o link.");
     }
   };
 
@@ -223,9 +223,9 @@ export function PlaylistContextMenuProvider({
     setPosition(null);
     try {
       await navigator.clipboard.writeText(getPlaylistUrl(playlist));
-      showToast("Url copied to clipboard");
+      showToast("URL copiada para a área de transferência");
     } catch {
-      showToast("Unable to copy the link.");
+      showToast("Não foi possível copiar o link.");
     }
   };
 
@@ -240,7 +240,7 @@ export function PlaylistContextMenuProvider({
     const target = playlist;
     setPosition(null);
     setIsSaving(true);
-    showPersistentToast("Preparing export...");
+    showPersistentToast("Preparando exportação...");
 
     try {
       const tracks = await libraryController.getPlaylistTracks(target);
@@ -251,11 +251,11 @@ export function PlaylistContextMenuProvider({
       }
       showToast(
         result.format === "m3u" && result.written < tracks.length
-          ? `Exported ${result.written} of ${tracks.length} — M3U only holds local files`
-          : `Exported ${result.written} songs`,
+          ? `Exportadas ${result.written} de ${tracks.length} — M3U suporta apenas arquivos locais`
+          : `${result.written} músicas exportadas`,
       );
     } catch (error) {
-      showToast(error instanceof Error ? error.message : "Unable to export this playlist.");
+      showToast(error instanceof Error ? error.message : "Não foi possível exportar esta playlist.");
     } finally {
       setIsSaving(false);
     }
@@ -280,13 +280,13 @@ export function PlaylistContextMenuProvider({
     try {
       const selected = await openDialog({
         multiple: false,
-        title: "Choose playlist image",
-        filters: [{ name: "Images", extensions: ["jpg", "jpeg", "png", "gif", "bmp", "webp"] }],
+        title: "Escolher imagem da playlist",
+        filters: [{ name: "Imagens", extensions: ["jpg", "jpeg", "png", "gif", "bmp", "webp"] }],
       });
       if (typeof selected !== "string") return;
       refreshPlaylistArtwork(selected);
     } catch (error) {
-      showToast(error instanceof Error ? error.message : "Unable to set that image.");
+      showToast(error instanceof Error ? error.message : "Não foi possível definir esta imagem.");
     }
   };
 
@@ -305,9 +305,9 @@ export function PlaylistContextMenuProvider({
     setPosition(null);
     try {
       await libraryController.renamePlaylist(playlist, trimmed);
-      showToast(`Renamed to ${trimmed}`);
+      showToast(`Renomeada para ${trimmed}`);
     } catch (error) {
-      showToast(error instanceof Error ? error.message : "Unable to rename this playlist.");
+      showToast(error instanceof Error ? error.message : "Não foi possível renomear esta playlist.");
     }
   };
 
@@ -318,9 +318,9 @@ export function PlaylistContextMenuProvider({
     setPosition(null);
     try {
       await libraryController.deletePlaylist(target);
-      showToast(`Deleted ${target.title}`);
+      showToast(`Excluída ${target.title}`);
     } catch (error) {
-      showToast(error instanceof Error ? error.message : "Unable to delete this playlist.");
+      showToast(error instanceof Error ? error.message : "Não foi possível excluir esta playlist.");
     }
   };
 
@@ -350,7 +350,7 @@ export function PlaylistContextMenuProvider({
         >
           {renameDraft !== null ? (
             <div className="flex flex-col gap-2 p-1">
-              <span className="text-xs font-medium text-muted-foreground">Rename playlist</span>
+              <span className="text-xs font-medium text-muted-foreground">Renomear playlist</span>
               <input
                 ref={renameInputRef}
                 value={renameDraft}
@@ -359,7 +359,7 @@ export function PlaylistContextMenuProvider({
                   if (event.key === "Enter") void submitRename();
                   if (event.key === "Escape") setRenameDraft(null);
                 }}
-                aria-label="Playlist name"
+                aria-label="Nome da playlist"
                 className="w-full min-w-0 rounded-lg bg-background px-2.5 py-1.5 text-sm text-foreground outline-none focus:ring-1 focus:ring-inset focus:ring-border"
               />
               <div className="flex justify-end gap-1.5">
@@ -368,14 +368,14 @@ export function PlaylistContextMenuProvider({
                   className="rounded-full px-3 py-1.5 text-xs text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   onClick={() => setRenameDraft(null)}
                 >
-                  Cancel
+                  Cancelar
                 </button>
                 <button
                   type="button"
                   className="rounded-full bg-primary px-3 py-1.5 text-xs font-medium text-primary-foreground transition-transform hover:scale-[1.02] active:scale-95 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
                   onClick={() => void submitRename()}
                 >
-                  Save
+                  Salvar
                 </button>
               </div>
             </div>
@@ -389,7 +389,7 @@ export function PlaylistContextMenuProvider({
               onClick={() => void copyAlbumUrl()}
             >
               <CopyIcon size={18} />
-              <span>Copy album URL</span>
+              <span>Copiar URL do álbum</span>
             </button>
           )}
           {canCopyPlaylistUrl && (
@@ -400,7 +400,7 @@ export function PlaylistContextMenuProvider({
               onClick={() => void copyPlaylistUrl()}
             >
               <CopyIcon size={18} />
-              <span>Copy playlist URL</span>
+              <span>Copiar URL da playlist</span>
             </button>
           )}
           {playlist && (
@@ -411,7 +411,7 @@ export function PlaylistContextMenuProvider({
               onClick={toggleHiddenPlaylist}
             >
               {isHiddenPlaylist ? <EyeIcon size={18} /> : <EyeClosedIcon size={18} />}
-              <span>{isHiddenPlaylist ? "Unhide from library" : "Hide from library"}</span>
+              <span>{isHiddenPlaylist ? "Reexibir na biblioteca" : "Ocultar da biblioteca"}</span>
             </button>
           )}
           {canEditPlaylist && (
@@ -422,7 +422,7 @@ export function PlaylistContextMenuProvider({
               onClick={() => setRenameDraft(playlist?.title ?? "")}
             >
               <PencilIcon size={18} />
-              <span>Rename</span>
+              <span>Renomear</span>
             </button>
           )}
           {isLocalPlaylistMenu && (
@@ -433,7 +433,7 @@ export function PlaylistContextMenuProvider({
               onClick={() => void choosePlaylistImage()}
             >
               <ImageIcon size={18} />
-              <span>Change image</span>
+              <span>Alterar imagem</span>
             </button>
           )}
           {isLocalPlaylistMenu && playlist?.artworkUrl?.startsWith(LOCAL_IMAGE_PREFIX) && (
@@ -444,7 +444,7 @@ export function PlaylistContextMenuProvider({
               onClick={() => void clearPlaylistImage()}
             >
               <ImageIcon size={18} />
-              <span>Use default image</span>
+              <span>Usar imagem padrão</span>
             </button>
           )}
           {playlist && (
@@ -455,7 +455,7 @@ export function PlaylistContextMenuProvider({
               onClick={() => void exportSelectedPlaylist()}
             >
               <DownloadIcon size={18} />
-              <span>Export playlist</span>
+              <span>Exportar playlist</span>
             </button>
           )}
           {canEditPlaylist && (
@@ -481,10 +481,10 @@ export function PlaylistContextMenuProvider({
               <TrashIcon size={18} />
               <span>
                 {confirmDelete
-                  ? "Tap again to delete"
+                  ? "Toque novamente para excluir"
                   : isLocalPlaylistMenu
-                    ? "Delete local playlist"
-                    : "Delete playlist"}
+                    ? "Excluir playlist local"
+                    : "Excluir playlist"}
               </span>
             </button>
           )}
@@ -496,7 +496,7 @@ export function PlaylistContextMenuProvider({
               onClick={() => void toggleAlbumSaved()}
             >
               {isSaved ? <BookmarkActiveIcon size={18} /> : <BookmarkIcon size={18} />}
-              <span>{isSaved ? "Remove from library" : "Save to library"}</span>
+              <span>{isSaved ? "Remover da biblioteca" : "Salvar na biblioteca"}</span>
             </button>
           )}
           </>
@@ -507,7 +507,7 @@ export function PlaylistContextMenuProvider({
         <div className="fixed bottom-28 left-1/2 z-[60] flex -translate-x-1/2 items-center gap-2 rounded-full bg-popover/95 px-4 py-2 text-sm text-foreground shadow-2xl backdrop-blur" role="status">
           {isSaving ? (
             <Loader variant="spinner" size={18} />
-          ) : (toast.startsWith("Saved ") || toast.startsWith("Removed ") || toast === "Url copied to clipboard" || toast === "Local playlist deleted") && (
+          ) : (toast.startsWith("Salvo") || toast.startsWith("Removido") || toast.startsWith("Renomeada") || toast.startsWith("Excluída") || toast === "URL copiada para a área de transferência" || toast === "Playlist local excluída") && (
             <CheckIcon size={18} aria-hidden="true" />
           )}
           <span>{toast}</span>

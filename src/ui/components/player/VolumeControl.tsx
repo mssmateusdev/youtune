@@ -73,7 +73,7 @@ export function VolumeControl() {
             if (delta === 0) return;
             applyVolume(percent + (delta < 0 ? 1 : -1) * WHEEL_STEP_PERCENT);
           }}
-          aria-label={isMuted ? `Unmute (volume ${percent}%)` : `Mute (volume ${percent}%)`}
+          aria-label={isMuted ? `Ativar som (volume ${percent}%)` : `Desativar som (volume ${percent}%)`}
           className="flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-card hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
         >
           <VolumeGlyph size={18} aria-hidden="true" />
@@ -83,7 +83,7 @@ export function VolumeControl() {
       <div className="flex flex-col gap-2">
         <div className="flex items-baseline justify-between gap-3">
           <span className="text-xs font-medium text-foreground">
-            {isMuted ? "Muted" : "Volume"}
+            {isMuted ? "Mudo" : "Volume"}
           </span>
           <span className="text-xs tabular-nums text-muted-foreground">{percent}%</span>
         </div>

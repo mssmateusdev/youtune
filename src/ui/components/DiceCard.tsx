@@ -32,8 +32,8 @@ export function DiceCard({ tracks, isSpinning = false, onClick }: DiceCardProps)
   return (
     <PickCard
       artworkUrl={preview?.artworkUrl}
-      title="Surprise me"
-      subtitle="Pick something for me"
+      title="Surpreenda-me"
+      subtitle="Escolha algo para mim"
       disabled={tracks.length === 0 || isSpinning}
       onSelect={onClick}
       accessory={

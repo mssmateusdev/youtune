@@ -405,17 +405,17 @@ export function LyricsView({ onClose }: LyricsViewProps) {
   };
 
   const sourceLabel = lyrics?.sourceLabel;
-  const timingLabel = hasLines ? (isSynced ? "Synced" : "Unsynced") : null;
+  const timingLabel = hasLines ? (isSynced ? "Sincronizada" : "Não sincronizada") : null;
   const emptyMessage = !isOnline
-    ? "You're offline. Lyrics need a connection."
+    ? "Você está offline. As letras precisam de conexão."
     : failed
-      ? "Lyrics could not be loaded."
-      : "No lyrics found for this song.";
+      ? "Não foi possível carregar as letras."
+      : "Nenhuma letra encontrada para esta música.";
 
   return (
     <section
       className="@container/lyrics relative flex h-full min-h-0 w-full flex-col overflow-hidden"
-      aria-label="Lyrics"
+      aria-label="Letras"
     >
       {/*
         The cover, oversized and blurred past recognition, is the only colour on the screen.
@@ -464,8 +464,8 @@ export function LyricsView({ onClose }: LyricsViewProps) {
           className="flex size-9 items-center justify-center rounded-full bg-card/60 text-muted-foreground backdrop-blur transition-colors hover:bg-card hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           onClick={() => playerUIStore.setLyricsFullscreen(!isFullscreen)}
           aria-pressed={isFullscreen}
-          aria-label={isFullscreen ? "Exit full screen" : "Full screen"}
-          title={isFullscreen ? "Exit full screen (Esc)" : "Full screen"}
+          aria-label={isFullscreen ? "Sair da tela cheia" : "Tela cheia"}
+          title={isFullscreen ? "Sair da tela cheia (Esc)" : "Tela cheia"}
         >
           {isFullscreen ? <QuitFullScreenIcon size={18} /> : <FullScreenIcon size={18} />}
         </button>
@@ -473,8 +473,8 @@ export function LyricsView({ onClose }: LyricsViewProps) {
           type="button"
           className="flex size-9 items-center justify-center rounded-full bg-card/60 text-muted-foreground backdrop-blur transition-colors hover:bg-card hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           onClick={onClose}
-          aria-label="Close lyrics"
-          title={isFullscreen ? "Close lyrics" : "Close lyrics (Esc)"}
+          aria-label="Fechar letras"
+          title={isFullscreen ? "Fechar letras" : "Fechar letras (Esc)"}
         >
           <CloseIcon size={19} />
         </button>
@@ -492,7 +492,7 @@ export function LyricsView({ onClose }: LyricsViewProps) {
           />
           <div className="min-w-0">
             <h1 className="text-balance text-2xl font-bold leading-tight tracking-[-0.03em] text-foreground">
-              {track?.title ?? "Nothing playing"}
+              {track?.title ?? "Nada tocando"}
             </h1>
             {track && (
               <p className="mt-1.5 text-sm text-muted-foreground">
@@ -513,7 +513,7 @@ export function LyricsView({ onClose }: LyricsViewProps) {
           />
           <div className="min-w-0 flex-1">
             <h1 className="truncate text-lg font-bold tracking-[-0.02em] text-foreground">
-              {track?.title ?? "Nothing playing"}
+              {track?.title ?? "Nada tocando"}
             </h1>
             {track && (
               <p className="truncate text-sm text-muted-foreground">
@@ -542,7 +542,7 @@ export function LyricsView({ onClose }: LyricsViewProps) {
             >
               {isLoading && <LyricsSkeleton />}
 
-              {!isLoading && !track && <LyricsMessage text="Play something to see its lyrics." />}
+              {!isLoading && !track && <LyricsMessage text="Reproduza algo para ver as letras." />}
 
               {!isLoading && track && !hasLines && (
                 <LyricsMessage
@@ -619,10 +619,10 @@ export function LyricsView({ onClose }: LyricsViewProps) {
               type="button"
               className="absolute bottom-5 left-1/2 flex -translate-x-1/2 items-center gap-2 rounded-full bg-card px-4 py-2 text-sm font-medium text-foreground shadow-xl shadow-black/30 transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               onClick={resumeFollow}
-              aria-label="Resync lyrics to current playback position"
+              aria-label="Ressincronizar letras com a reprodução atual"
             >
               <RefreshIcon size={15} aria-hidden="true" />
-              Back to current line
+              Voltar à linha atual
             </button>
           )}
         </div>
@@ -804,18 +804,18 @@ function LyricsSourcePanel({
           onClick={() => setIsOpen((open) => !open)}
           aria-expanded={isOpen}
           aria-haspopup="dialog"
-          aria-label="Show which lyric sources were tried"
+          aria-label="Mostrar fontes de letras testadas"
         >
           <span
             className={cn("size-1.5 shrink-0 rounded-full", STATUS_DOT[winner?.status ?? "miss"])}
             aria-hidden="true"
           />
-          <span className="truncate">{winner ? `via ${winner.label}` : "No source matched"}</span>
+          <span className="truncate">{winner ? `via ${winner.label}` : "Nenhuma fonte encontrada"}</span>
         </button>
       }
     >
       <p className="px-2 pb-1.5 pt-1 text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
-        Sources, best first
+        Fontes (melhor primeiro)
       </p>
       <div className="flex flex-col">
         {attempts.map((attempt) => {
@@ -859,7 +859,7 @@ function LyricsSourcePanel({
 }
 
 function formatOffset(offset: number): string {
-  if (offset === 0) return "In sync";
+  if (offset === 0) return "Sincronizado";
   const magnitude = Math.abs(offset).toFixed(2).replace(/\.?0+$/, "");
   return `${offset > 0 ? "+" : "−"}${magnitude}s`;
 }
@@ -878,11 +878,11 @@ function LyricsOffsetControl({ trackId, offset }: { trackId: string; offset: num
     <div
       className="flex shrink-0 items-center gap-0.5 rounded-full bg-card/70 p-0.5"
       role="group"
-      aria-label="Lyric timing"
+      aria-label="Sincronização de letra"
     >
       <OffsetButton
         label="−"
-        ariaLabel={`Delay lyrics by ${OFFSET_STEP_SEC} seconds`}
+        ariaLabel={`Atrasar letras em ${OFFSET_STEP_SEC} segundos`}
         onClick={() => step(-OFFSET_STEP_SEC)}
       />
       <button
@@ -890,14 +890,14 @@ function LyricsOffsetControl({ trackId, offset }: { trackId: string; offset: num
         className="min-w-[4.25rem] rounded-full px-1 py-0.5 text-center tabular-nums transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:hover:text-muted-foreground"
         onClick={() => setLyricsOffset(trackId, 0)}
         disabled={offset === 0}
-        aria-label={offset === 0 ? "Lyrics are in sync" : "Reset lyric timing"}
-        title={offset === 0 ? undefined : "Reset"}
+        aria-label={offset === 0 ? "Letras sincronizadas" : "Redefinir sincronização"}
+        title={offset === 0 ? undefined : "Redefinir"}
       >
         {formatOffset(offset)}
       </button>
       <OffsetButton
         label="+"
-        ariaLabel={`Advance lyrics by ${OFFSET_STEP_SEC} seconds`}
+        ariaLabel={`Adiantar letras em ${OFFSET_STEP_SEC} segundos`}
         onClick={() => step(OFFSET_STEP_SEC)}
       />
     </div>
@@ -930,7 +930,7 @@ function OffsetButton({
 function LyricsSkeleton() {
   const widths = [72, 58, 84, 46, 66, 78, 52];
   return (
-    <div className="flex flex-col gap-7 pt-10" role="status" aria-label="Loading lyrics">
+    <div className="flex flex-col gap-7 pt-10" role="status" aria-label="Carregando letras">
       {widths.map((width, index) => (
         <div
           key={width}
@@ -954,7 +954,7 @@ function LyricsMessage({ text, onRetry }: { text: string; onRetry?: () => void }
           onClick={onRetry}
         >
           <RefreshIcon size={15} aria-hidden="true" />
-          Try again
+          Tentar novamente
         </button>
       )}
     </div>

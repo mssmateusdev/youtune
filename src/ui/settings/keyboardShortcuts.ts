@@ -45,93 +45,93 @@ export const KEYBOARD_SHORTCUT_ACTIONS: Array<{
 }> = [
   {
     id: "playPause",
-    label: "Play / pause",
-    description: "Toggle playback for the current track.",
+    label: "Reproduzir / pausar",
+    description: "Alterna a reprodução da faixa atual.",
   },
   {
     id: "mute",
-    label: "Mute / unmute",
-    description: "Toggle player audio.",
+    label: "Mutar / desmutar",
+    description: "Alterna o áudio do player.",
   },
   {
     id: "previousTrack",
-    label: "Previous track",
-    description: "Go back to the previous track.",
+    label: "Faixa anterior",
+    description: "Volta para a faixa anterior.",
   },
   {
     id: "nextTrack",
-    label: "Next track",
-    description: "Skip to the next track.",
+    label: "Próxima faixa",
+    description: "Avança para a próxima faixa.",
   },
   {
     id: "closeTab",
-    label: "Close tab",
-    description: "Close the active tab.",
+    label: "Fechar aba",
+    description: "Fecha a aba ativa.",
   },
   {
     id: "newTab",
-    label: "New tab",
-    description: "Open a new music tab.",
+    label: "Nova aba",
+    description: "Abre uma nova aba de música.",
   },
   {
     id: "search",
-    label: "Search",
-    description: "Open or close search.",
+    label: "Pesquisar",
+    description: "Abre ou fecha a pesquisa.",
   },
   {
     id: "navigateBack",
-    label: "Go back",
-    description: "Go back in the active tab.",
+    label: "Voltar página",
+    description: "Volta à tela anterior na aba ativa.",
   },
   {
     id: "navigateForward",
-    label: "Go forward",
-    description: "Go forward in the active tab.",
+    label: "Avançar página",
+    description: "Avança à tela seguinte na aba ativa.",
   },
   {
     id: "tab1",
-    label: "Go to tab 1",
-    description: "Switch to the first tab.",
+    label: "Ir para aba 1",
+    description: "Alterna para a primeira aba.",
   },
   {
     id: "tab2",
-    label: "Go to tab 2",
-    description: "Switch to the second tab.",
+    label: "Ir para aba 2",
+    description: "Alterna para a segunda aba.",
   },
   {
     id: "tab3",
-    label: "Go to tab 3",
-    description: "Switch to the third tab.",
+    label: "Ir para aba 3",
+    description: "Alterna para a terceira aba.",
   },
   {
     id: "tab4",
-    label: "Go to tab 4",
-    description: "Switch to the fourth tab.",
+    label: "Ir para aba 4",
+    description: "Alterna para a quarta aba.",
   },
   {
     id: "tab5",
-    label: "Go to tab 5",
-    description: "Switch to the fifth tab.",
+    label: "Ir para aba 5",
+    description: "Alterna para a quinta aba.",
   },
   {
     id: "tab6",
-    label: "Go to tab 6",
-    description: "Switch to the sixth tab.",
+    label: "Ir para aba 6",
+    description: "Alterna para a sexta aba.",
   },
   {
     id: "tab7",
-    label: "Go to tab 7",
-    description: "Switch to the seventh tab.",
+    label: "Ir para aba 7",
+    description: "Alterna para a sétima aba.",
   },
   {
     id: "tab8",
-    label: "Go to tab 8",
-    description: "Switch to the eighth tab.",
+    label: "Ir para aba 8",
+    description: "Alterna para a oitava aba.",
   },
   {
     id: "tab9",
-    label: "Go to tab 9",
-    description: "Switch to the ninth tab.",
+    label: "Ir para aba 9",
+    description: "Alterna para a nona aba.",
   },
 ];
 
@@ -371,11 +371,11 @@ export function areShortcutsEqual(
 }
 
 function getKeyLabel(shortcut: KeyboardShortcut): string {
-  if (shortcut.code === "Space") return "Space";
-  if (shortcut.code === "ArrowLeft") return "Left";
-  if (shortcut.code === "ArrowRight") return "Right";
-  if (shortcut.code === "ArrowUp") return "Up";
-  if (shortcut.code === "ArrowDown") return "Down";
+  if (shortcut.code === "Space") return "Espaço";
+  if (shortcut.code === "ArrowLeft") return "Seta esquerda";
+  if (shortcut.code === "ArrowRight") return "Seta direita";
+  if (shortcut.code === "ArrowUp") return "Seta cima";
+  if (shortcut.code === "ArrowDown") return "Seta baixo";
   if (shortcut.code === "Escape") return "Esc";
   if (shortcut.code === "Backspace") return "Backspace";
   if (shortcut.code === "Delete") return "Delete";
@@ -386,7 +386,7 @@ function getKeyLabel(shortcut: KeyboardShortcut): string {
 }
 
 export function formatKeyboardShortcut(shortcut: KeyboardShortcut | null): string {
-  if (!shortcut) return "None";
+  if (!shortcut) return "Nenhum";
 
   const parts: string[] = [];
   if (shortcut.primary) parts.push(isMacOS ? "Cmd" : "Ctrl");

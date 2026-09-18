@@ -2,7 +2,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { SpinnerSteps } from "@/components/motion/loader";
 import { cn } from "@/lib/utils";
-import { PlayActiveIcon, QueuePanelIcon } from "@/ui/icons";
+import { FullScreenIcon, PlayActiveIcon, QueuePanelIcon } from "@/ui/icons";
+import { playerUIStore } from "../../stores/playerUIStore";
 import { tauriFetch } from "../../../datasource/youtube/tauriFetch";
 import { TrackInfo } from "./TrackInfo";
 import { PlaybackControls } from "./PlaybackControls";
@@ -159,20 +160,20 @@ export function PlayerBar({ onToggleLyrics, onToggleQueue, isQueueOpen, onConnec
             role="status"
             aria-live="polite"
           >
-            <span>You don't have an internet connection</span>
+            <span>Você está sem conexão com a internet</span>
             <button
               type="button"
               className="flex items-center gap-1.5 rounded px-2.5 py-1 text-xs transition-colors hover:bg-card disabled:opacity-50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               onClick={() => void reconnect()}
               disabled={isCheckingConnection}
-              aria-label="Reconnect to the internet"
+              aria-label="Reconectar à internet"
             >
               {isCheckingConnection ? (
                 <SpinnerSteps   size={24}  />
               ) : (
                 <PlayActiveIcon size={14} aria-hidden="true" />
               )}
-              <span>{isCheckingConnection ? "Checking" : "Reconnect"}</span>
+              <span>{isCheckingConnection ? "Verificando" : "Reconectar"}</span>
             </button>
           </motion.div>
         )}
@@ -220,8 +221,8 @@ export function PlayerBar({ onToggleLyrics, onToggleQueue, isQueueOpen, onConnec
                     : "text-muted-foreground hover:text-foreground",
                 )}
                 onClick={onToggleQueue}
-                aria-label={isQueueOpen ? "Close queue" : "Open queue"}
-                title={isQueueOpen ? "Close queue" : "Open queue"}
+                aria-label={isQueueOpen ? "Fechar fila" : "Abrir fila"}
+                title={isQueueOpen ? "Fechar fila" : "Abrir fila"}
               >
                 <QueuePanelIcon size={18} />
               </button>
@@ -230,6 +231,19 @@ export function PlayerBar({ onToggleLyrics, onToggleQueue, isQueueOpen, onConnec
             <DownloadButton />
             <PlaybackOptions />
             <VolumeControl />
+
+            <button
+              type="button"
+              className="flex size-8 items-center justify-center rounded-full text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              onClick={(e) => {
+                e.stopPropagation();
+                playerUIStore.setFullscreenPlayer(true);
+              }}
+              aria-label="Tela cheia (F)"
+              title="Tela cheia (F)"
+            >
+              <FullScreenIcon size={18} />
+            </button>
           </div>
         </div>
       </div>

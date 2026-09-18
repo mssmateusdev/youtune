@@ -29,42 +29,42 @@ type StepContent = { title: string; text: string; target: string; shortcut?: str
 function getStepContent(): Record<OnboardingStep, StepContent> {
   return {
     "open-search": {
-      title: "Find something to play",
-      text: `Press ${primaryModifierLabel} Space, or click the search bar.`,
+      title: "Encontre algo para tocar",
+      text: `Pressione ${primaryModifierLabel} Espaço ou clique na barra de pesquisa.`,
       target: '[data-onboarding="search"]',
-      shortcut: `${primaryModifierLabel} Space`,
+      shortcut: `${primaryModifierLabel} Espaço`,
     },
     "type-first": {
-      title: "Search for a song",
-      text: "Type one of your favourites, then pick it from the results.",
+      title: "Pesquise uma música",
+      text: "Digite uma de suas favoritas e escolha-a nos resultados.",
       target: '[data-onboarding="search-panel"]',
-      shortcut: `${primaryModifierLabel} Space`,
+      shortcut: `${primaryModifierLabel} Espaço`,
     },
     "play-first": {
-      title: "Play it",
-      text: "Choose a result to start playing.",
+      title: "Toque a música",
+      text: "Escolha um resultado para começar a tocar.",
       target: '[data-onboarding="search-panel"], [data-onboarding="search-results"]',
     },
     "new-tab": {
-      title: "Open a second tab",
-      text: "Tabs each keep their own music, so this song carries on playing here.",
+      title: "Abra uma segunda aba",
+      text: "Cada aba mantém sua própria música, então esta faixa continuará tocando aqui.",
       target: '[data-onboarding="new-tab"]',
       shortcut: `${primaryModifierLabel} T`,
     },
     "type-second": {
-      title: "Search again",
-      text: "Find a different song in this new tab.",
+      title: "Pesquise novamente",
+      text: "Encontre uma música diferente nesta nova aba.",
       target: '[data-onboarding="search-panel"]',
-      shortcut: `${primaryModifierLabel} Space`,
+      shortcut: `${primaryModifierLabel} Espaço`,
     },
     "play-second": {
-      title: "Play the second song",
-      text: "This tab now has music of its own.",
+      title: "Toque a segunda música",
+      text: "Esta aba agora possui sua própria música.",
       target: '[data-onboarding="search-panel"], [data-onboarding="search-results"]',
     },
     "switch-back": {
-      title: "Switch back",
-      text: "Your first song is exactly where you left it.",
+      title: "Volte para a anterior",
+      text: "Sua primeira música está exatamente onde você a deixou.",
       target: '[data-onboarding="first-tab"]',
       shortcut: `${primaryModifierLabel} 1, 2, 3…`,
     },
@@ -272,7 +272,7 @@ export function Onboarding({ step, onSkip, onSkipStep, onBack }: OnboardingProps
         <div className="flex items-start justify-between gap-2">
           <div className="flex flex-col gap-0.5">
             <span className="text-xs font-medium uppercase tracking-wider text-muted-foreground">
-              Step {index + 1} of {ONBOARDING_STEPS.length}
+              Passo {index + 1} de {ONBOARDING_STEPS.length}
             </span>
             <h2 id="onboarding-title" className="text-sm font-semibold">
               {content.title}
@@ -282,8 +282,8 @@ export function Onboarding({ step, onSkip, onSkipStep, onBack }: OnboardingProps
             className="rounded p-1 text-muted-foreground transition-colors hover:bg-card hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
             type="button"
             onClick={onSkip}
-            aria-label="Skip the whole tour"
-            title="Skip tour (Esc)"
+            aria-label="Pular todo o tour"
+            title="Pular tour (Esc)"
           >
             <CloseIcon size={16} />
           </button>
@@ -317,10 +317,10 @@ export function Onboarding({ step, onSkip, onSkipStep, onBack }: OnboardingProps
             type="button"
             onClick={onBack}
             disabled={isFirst}
-            title="Previous step (Alt ←)"
+            title="Passo anterior (Alt ←)"
           >
             <ArrowLeftIcon size={14} />
-            Back
+            Voltar
           </button>
 
           <div className="flex items-center gap-1">
@@ -329,22 +329,22 @@ export function Onboarding({ step, onSkip, onSkipStep, onBack }: OnboardingProps
               type="button"
               onClick={onSkip}
             >
-              Skip tour
+              Pular tour
             </button>
             <button
               className="flex items-center gap-1 rounded-md bg-primary px-2.5 py-1 text-xs font-medium text-primary-foreground transition-opacity hover:opacity-90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               type="button"
               onClick={onSkipStep}
-              title={isLast ? "Finish" : "Skip this step (Alt →)"}
+              title={isLast ? "Concluir" : "Pular este passo (Alt →)"}
             >
               {isLast ? (
                 <>
-                  Finish
+                  Concluir
                   <CheckIcon size={14} />
                 </>
               ) : (
                 <>
-                  Skip step
+                  Pular passo
                   <ArrowRightIcon size={14} />
                 </>
               )}
@@ -365,7 +365,7 @@ export function OnboardingCompleteToast() {
       <span className="text-primary" aria-hidden="true">
         <CheckIcon size={18} />
       </span>
-      <span className="text-sm text-foreground">You're all set</span>
+      <span className="text-sm text-foreground">Tudo pronto!</span>
     </div>
   );
 }
@@ -375,14 +375,14 @@ export function OnboardingWelcome() {
     <div
       className="fixed inset-0 z-[95] grid place-items-center bg-background"
       role="status"
-      aria-label="Welcome"
+      aria-label="Boas-vindas"
     >
       <div
         className="pointer-events-none absolute left-1/2 top-1/2 size-[660px] -translate-x-1/2 -translate-y-1/2 rounded-full"
         style={{ background: GLOW_GRADIENT }}
       />
       <div className="relative flex flex-col items-center gap-3 text-center">
-        <strong>Welcome</strong>
+        <strong>Bem-vindo</strong>
       </div>
     </div>
   );
@@ -411,21 +411,18 @@ export function KeychainNotice({ onContinue }: KeychainNoticeProps) {
         >
           <KeyIcon size={28} />
         </span>
-        <h1 id="keychain-title">A note about macOS Keychain</h1>
+        <h1 id="keychain-title">Aviso sobre o macOS Keychain</h1>
         <p>
-          This client uses Keychain to protect the encryption key for your YouTube Music session
-          cookie. macOS may ask for permission when you continue.
+          Este cliente usa o Keychain para proteger a chave de criptografia do cookie da sua sessão do YouTube Music. O macOS pode solicitar permissão ao continuar.
         </p>
         <p>
-          The app only accesses the Keychain item it created for this purpose. It does not request
-          access to your passwords or any other Keychain items. You can deny this, but signing in
-          with YouTube Music will not work then.
+          O aplicativo acessa apenas o item do Keychain criado para essa finalidade. Ele não solicita acesso às suas senhas ou a outros itens. Você pode recusar, mas o login no YouTube Music não funcionará.
         </p>
         <p>
-          <strong>Choose “Always Allow” if you would rather not see the prompt again.</strong>
+          <strong>Escolha “Permitir Sempre” se preferir não ver o aviso novamente.</strong>
         </p>
         <button type="button" onClick={onContinue}>
-          Continue
+          Continuar
         </button>
       </div>
     </div>

@@ -11,8 +11,12 @@ import {
   setOfflineStreamResolver,
   startOfflineProgressFeed,
 } from "./offlineStore";
+import { isFastLoadingEnabled } from "../ui/settings/adBlockAndSpeed";
 
 const dataSource = new YouTubeMusicDataSource();
+if (isFastLoadingEnabled()) {
+  dataSource.warmPlayback?.();
+}
 
 export const libraryController = new LibraryController(dataSource);
 export const searchController = new SearchController(dataSource);

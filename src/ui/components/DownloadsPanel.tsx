@@ -58,7 +58,7 @@ function DownloadRow({
           type="button"
           className="shrink-0 rounded-full p-1 text-muted-foreground transition-colors hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
           onClick={onCancel}
-          aria-label={`Cancel download of ${track.title}`}
+          aria-label={`Cancelar download de ${track.title}`}
         >
           <CloseIcon size={16} aria-hidden="true" />
         </button>
@@ -99,13 +99,13 @@ export function DownloadsPanel({ onOpenDownloads }: { onOpenDownloads?: () => vo
       trigger={
         <Tooltip
           side="bottom"
-          content={activeCount > 0 ? `Downloading ${activeCount}` : "Downloads"}
+          content={activeCount > 0 ? `Baixando ${activeCount}` : "Downloads"}
         >
           <Button
             variant="ghost"
             size="icon"
             className="relative"
-            aria-label={activeCount > 0 ? `Downloads, ${activeCount} in progress` : "Downloads"}
+            aria-label={activeCount > 0 ? `Downloads, ${activeCount} em andamento` : "Downloads"}
             aria-expanded={open}
             onClick={() => setOpen((value) => !value)}
           >
@@ -129,20 +129,20 @@ export function DownloadsPanel({ onOpenDownloads }: { onOpenDownloads?: () => vo
       <div className="flex items-center justify-between gap-2 px-2 pb-1.5 pt-1">
         <span className="text-sm font-semibold text-foreground">Downloads</span>
         <span className="text-xs text-muted-foreground">
-          {storedCount > 0 ? `${storedCount} saved · ${formatBytes(offline.usedBytes)}` : "Nothing saved"}
+          {storedCount > 0 ? `${storedCount} salvos · ${formatBytes(offline.usedBytes)}` : "Nada salvo"}
         </span>
       </div>
 
       {activeCount === 0 && failed.length === 0 && recent.length === 0 ? (
         <p className="px-3 py-8 text-center text-sm text-muted-foreground">
-          Nothing downloaded yet. Save a song for offline and it shows up here.
+          Nada baixado ainda. Baixe uma música para ouvir offline e ela aparecerá aqui.
         </p>
       ) : (
         <div className="flex max-h-96 flex-col gap-0.5 overflow-y-auto">
           {downloadingTrack && (
             <DownloadRow
               track={downloadingTrack}
-              status={offline.progress === null ? "Downloading…" : `Downloading · ${offline.progress}%`}
+              status={offline.progress === null ? "Baixando…" : `Baixando · ${offline.progress}%`}
               progress={offline.progress}
               onCancel={() => cancelDownload(downloadingTrack.id)}
             />
@@ -152,7 +152,7 @@ export function DownloadsPanel({ onOpenDownloads }: { onOpenDownloads?: () => vo
             <DownloadRow
               key={track.id}
               track={track}
-              status={`Queued · ${index + 1} of ${queuedTracks.length}`}
+              status={`Na fila · ${index + 1} de ${queuedTracks.length}`}
               onCancel={() => cancelDownload(track.id)}
             />
           ))}
@@ -160,7 +160,7 @@ export function DownloadsPanel({ onOpenDownloads }: { onOpenDownloads?: () => vo
           {failed.map(([trackId, message]) => {
             const track = offline.pending[trackId] ?? offline.entries[trackId]?.track;
             return track ? (
-              <DownloadRow key={trackId} track={track} status={`Failed · ${message}`} />
+              <DownloadRow key={trackId} track={track} status={`Falhou · ${message}`} />
             ) : null;
           })}
 
@@ -168,7 +168,7 @@ export function DownloadsPanel({ onOpenDownloads }: { onOpenDownloads?: () => vo
             <>
               {activeCount > 0 && (
                 <span className="px-2 pb-1 pt-2 text-xs font-medium text-muted-foreground">
-                  Recently saved
+                  Salvos recentemente
                 </span>
               )}
               {recent.map((entry) => (
@@ -202,7 +202,7 @@ export function DownloadsPanel({ onOpenDownloads }: { onOpenDownloads?: () => vo
             onOpenDownloads();
           }}
         >
-          Open downloads
+          Abrir downloads
         </button>
       )}
     </FloatingPanel>
