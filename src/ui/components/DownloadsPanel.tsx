@@ -196,7 +196,7 @@ export function DownloadsPanel({ onOpenDownloads }: { onOpenDownloads?: () => vo
       {onOpenDownloads && (
         <button
           type="button"
-          className="mt-1 w-full rounded-xl px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-white/[0.06] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
+          className="mt-1 w-full rounded-xl px-3 py-2 text-sm font-medium text-foreground transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring"
           onClick={() => {
             setOpen(false);
             onOpenDownloads();

@@ -41,7 +41,16 @@ export function resolveTheme(preference = readThemePreference()): ResolvedTheme 
  * already correct — a flash of the wrong theme is the classic failure here.
  */
 export function applyTheme(preference = readThemePreference()): void {
-  document.documentElement.setAttribute("data-theme", resolveTheme(preference));
+  const resolved = resolveTheme(preference);
+  if (typeof document !== "undefined") {
+    document.documentElement.setAttribute("data-theme", resolved);
+    document.documentElement.classList.remove("light", "dark");
+    document.documentElement.classList.add(resolved);
+    const metaTheme = document.querySelector('meta[name="theme-color"]');
+    if (metaTheme) {
+      metaTheme.setAttribute("content", resolved === "light" ? "#f4f4f5" : "#090103");
+    }
+  }
 }
 
 export function setThemePreference(preference: ThemePreference): void {

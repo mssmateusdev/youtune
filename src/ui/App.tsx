@@ -2000,7 +2000,7 @@ useEffect(() => {
       webview there, so this edge would just be a stray line under the OS title bar.
     */}
     <div
-      className={`relative flex h-screen flex-col overflow-hidden rounded-[var(--window-radius)] ${
+      className={`relative flex h-screen flex-col overflow-hidden rounded-[var(--window-radius)] bg-background text-foreground ${
         nativeWindowControls ? "" : "border border-border ring-1 ring-inset ring-[var(--window-edge)]"
       }`}
     >

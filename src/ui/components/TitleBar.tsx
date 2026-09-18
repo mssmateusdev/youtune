@@ -219,10 +219,10 @@ export function TitleBar({
          {!hideHomeText && (
            <>
              <h3>YouTune</h3>
-             <span
-               className="ml-1 inline-flex items-center rounded-md bg-white/8 px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-muted-foreground"
-               aria-hidden="true"
-             >
+              <span
+                className="ml-1 inline-flex items-center rounded-md bg-muted px-1.5 py-0.5 text-[10px] font-medium tracking-wide text-muted-foreground"
+                aria-hidden="true"
+              >
                by Folky
              </span>
            </>

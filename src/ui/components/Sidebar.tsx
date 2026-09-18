@@ -1190,7 +1190,7 @@ export function Sidebar({
         */}
         {!shouldHideText && (totalLibraryCount > 0 || libraryFilter) && (
           <div className="flex shrink-0 items-center gap-1 px-2 pb-2">
-            <div className="group/filter flex min-w-0 flex-1 items-center gap-1.5 rounded-full bg-white/[0.04] px-2.5 py-1 text-muted-foreground transition-colors focus-within:bg-white/[0.08] focus-within:text-foreground">
+            <div className="group/filter flex min-w-0 flex-1 items-center gap-1.5 rounded-full bg-muted/60 border border-border/50 px-2.5 py-1 text-muted-foreground transition-colors focus-within:bg-muted focus-within:text-foreground">
               <SearchIcon size={14} aria-hidden="true" />
               <input
                 ref={filterInputRef}

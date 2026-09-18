@@ -22,9 +22,9 @@ import { shouldStartPageSearch } from "./pageSearchKeyboard";
  * the behaviour the original .playlistSearch width transition provided.
  */
 const SEARCH_FIELD =
-  "group/search flex min-h-8 items-center gap-1.5 overflow-hidden rounded-full bg-white/[0.04] px-2.5 " +
+  "group/search flex min-h-8 items-center gap-1.5 overflow-hidden rounded-full bg-muted/60 border border-border/50 px-2.5 " +
   "text-muted-foreground transition-[width,background-color] duration-200 cursor-text " +
-  "hover:bg-white/[0.08] focus-within:bg-white/[0.08] focus-within:text-foreground " +
+  "hover:bg-muted hover:text-foreground focus-within:bg-card focus-within:border-primary/50 focus-within:text-foreground " +
   "[&_input]:min-w-0 [&_input]:flex-1 [&_input]:bg-transparent [&_input]:text-sm " +
   "[&_input]:text-foreground [&_input]:outline-none [&_input]:placeholder:text-muted-foreground";
 const SEARCH_FIELD_COLLAPSED = "w-9 hover:w-56 focus-within:w-56";
@@ -210,7 +210,7 @@ export function AlbumView({ album, playerController, libraryController }: AlbumV
       {!error && (isLoading || tracks.length > 0) && (
         <>
           <div
-            className="flex flex-wrap items-center gap-1.5 self-start [&>button]:flex [&>button]:min-h-8 [&>button]:min-w-0 [&>button]:items-center [&>button]:justify-center [&>button]:gap-1.5 [&>button]:rounded-full [&>button]:bg-white/[0.04] [&>button]:px-3 [&>button]:text-sm [&>button]:font-medium [&>button]:text-muted-foreground [&>button]:transition-colors hover:[&>button]:bg-white/[0.08] hover:[&>button]:text-foreground focus-visible:[&>button]:outline-none focus-visible:[&>button]:ring-2 focus-visible:[&>button]:ring-ring"
+            className="flex flex-wrap items-center gap-1.5 self-start [&>button]:flex [&>button]:min-h-8 [&>button]:min-w-0 [&>button]:items-center [&>button]:justify-center [&>button]:gap-1.5 [&>button]:rounded-full [&>button]:bg-muted/50 [&>button]:border [&>button]:border-border/40 [&>button]:px-3 [&>button]:text-sm [&>button]:font-medium [&>button]:text-muted-foreground [&>button]:transition-colors hover:[&>button]:bg-muted hover:[&>button]:text-foreground focus-visible:[&>button]:outline-none focus-visible:[&>button]:ring-2 focus-visible:[&>button]:ring-ring"
             role="group"
             aria-label="Album song tools"
           >

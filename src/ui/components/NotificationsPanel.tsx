@@ -33,7 +33,7 @@ function NotificationRow({
       className={cn(
         "flex w-full items-start gap-3 rounded-xl px-3 py-2.5 text-left transition-colors",
         "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring",
-        canOpen ? "hover:bg-white/[0.06]" : "cursor-default",
+        canOpen ? "hover:bg-muted" : "cursor-default",
         !notification.read && "bg-primary/[0.07]",
       )}
       disabled={!canOpen}

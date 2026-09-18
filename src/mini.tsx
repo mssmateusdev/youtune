@@ -14,6 +14,7 @@ import {
 } from "./ui/settings/renderEffects";
 import { applyAccentColor, hydrateAccentColor } from "./ui/settings/accentColor";
 import { hydrateAdBlockAndSpeed } from "./ui/settings/adBlockAndSpeed";
+import { applyTheme, hydrateTheme, watchSystemTheme } from "./ui/settings/theme";
 
 applyPlatformAttributes();
 /*
@@ -23,11 +24,14 @@ applyPlatformAttributes();
  * agree without talking to each other; a window already open when the setting changes picks
  * it up on its next launch, which is when it is next visible anyway.
  */
+applyTheme();
+watchSystemTheme();
 applyAccentColor();
 applyPaperPcMode();
 applyRenderEffects();
 void Promise.all([
   hydrateMiniPlayerSettings(),
+  hydrateTheme(),
   hydratePaperPcMode(),
   hydrateRenderEffects(),
   hydrateAccentColor(),

@@ -242,7 +242,7 @@ const SETTING_LABEL =
   "flex flex-col gap-0.5 text-sm text-muted-foreground [&>strong]:text-sm [&>strong]:font-medium [&>strong]:text-foreground";
 
 /** Section card. One shape for every group so the page reads as a single system. */
-const SETTINGS_CARD = "flex flex-col gap-5 rounded-2xl bg-card/50 p-6";
+const SETTINGS_CARD = "flex flex-col gap-5 rounded-2xl bg-card/60 border border-border/40 p-6";
 
 /**
  * How long ago YouTube last answered as this account, in words.
