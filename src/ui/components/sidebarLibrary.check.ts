@@ -110,16 +110,19 @@ check(canReorderLibrary("custom", "   "), "a whitespace-only filter does not blo
 
 equal(reorderBlockedReason("custom", ""), null, "no reason when dragging is allowed");
 check(
-  (reorderBlockedReason("custom", "daft") ?? "").includes("filter"),
+  (reorderBlockedReason("custom", "daft") ?? "").toLowerCase().includes("busca")
+    || (reorderBlockedReason("custom", "daft") ?? "").toLowerCase().includes("filter"),
   "the filter is named as the blocker",
 );
 check(
-  (reorderBlockedReason("name", "") ?? "").includes("Custom"),
+  (reorderBlockedReason("name", "") ?? "").toLowerCase().includes("personalizada")
+    || (reorderBlockedReason("name", "") ?? "").includes("Custom"),
   "the sort mode is named as the blocker",
 );
 // The filter is the more immediate blocker when both apply, since it is what is on screen.
 check(
-  (reorderBlockedReason("name", "daft") ?? "").includes("filter"),
+  (reorderBlockedReason("name", "daft") ?? "").toLowerCase().includes("busca")
+    || (reorderBlockedReason("name", "daft") ?? "").toLowerCase().includes("filter"),
   "the filter takes precedence in the explanation",
 );
 

@@ -108,7 +108,7 @@ jobs:
           - name: Windows
             os: windows-latest
             rust_target: ""
-            build_args: --bundles msi,nsis
+            build_args: --bundles nsis
             apple_signing_identity: ""
           - name: macOS Apple Silicon
             os: macos-latest
@@ -237,7 +237,7 @@ jobs:
           fi
           echo "Uploading $portable_exe"
           gh release upload "$RELEASE_TAG" \
-            "${portable_exe}#Zuno-Windows-portable.exe" \
+            "${portable_exe}#YouTune-Windows-portable.exe" \
             --clobber
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
